@@ -1,0 +1,51 @@
+# ── Entorno ──────────────────────────────────
+.env
+.env.local
+.env.*.local
+
+# ── Backend (Java/Maven) ─────────────────────
+backend/target/
+backend/*.class
+backend/*.jar
+backend/*.war
+!.mvn/wrapper/maven-wrapper.jar
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.settings/
+.project
+.classpath
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Frontend (Node) ──────────────────────────
+frontend/node_modules/
+frontend/dist/
+frontend/*.log
+frontend/npm-debug.log*
+
+# ── Backups (datos sensibles) ────────────────
+*.enc
+backup_data/
+backups/
+
+# ── Docker ───────────────────────────────────
+docker/db_data/
+docker/redis_data/
+
+# ── Certificados y claves ────────────────────
+*.p12
+*.jks
+*.keystore
+*.pem
+!example.pem
+
+# ── Produccion (sin secretos reales) ─────────
+application-prod.yml

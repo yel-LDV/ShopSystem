@@ -1,0 +1,11 @@
+spring:
+  h2:
+    console:
+      enabled: true
+
+  jpa:
+    show-sql: false
+
+  mail:
+    username: dev
+    password: dev

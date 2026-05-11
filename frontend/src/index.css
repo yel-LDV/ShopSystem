@@ -1,0 +1,87 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --surface-primary: 250 249 247;
+  --surface-secondary: 243 241 238;
+  --surface-tertiary: 237 234 230;
+  --surface-sidebar: 250 249 247;
+
+  --ink-primary: 26 29 35;
+  --ink-secondary: 74 79 89;
+  --ink-tertiary: 123 128 138;
+  --ink-muted: 176 181 191;
+
+  --accent: 211 47 47;
+  --accent-hover: 183 28 28;
+  --accent-subtle: 255 235 238;
+
+  --semantic-success: 46 125 50;
+  --semantic-warning: 230 81 0;
+  --semantic-error: 198 40 40;
+
+  --border-standard: rgba(0, 0, 0, 0.08);
+  --border-soft: rgba(0, 0, 0, 0.05);
+  --border-emphasis: rgba(0, 0, 0, 0.15);
+
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-dropdown: 0 4px 16px rgba(0, 0, 0, 0.08);
+  --shadow-modal: 0 8px 32px rgba(0, 0, 0, 0.12);
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+}
+
+.dark {
+  --surface-primary: 13 13 18;
+  --surface-secondary: 21 21 28;
+  --surface-tertiary: 30 30 40;
+  --surface-sidebar: 10 10 15;
+
+  --ink-primary: 232 230 227;
+  --ink-secondary: 155 153 148;
+  --ink-tertiary: 107 105 101;
+  --ink-muted: 74 72 69;
+
+  --accent: 255 23 68;
+  --accent-hover: 255 82 82;
+  --accent-subtle: 42 16 21;
+
+  --semantic-success: 105 240 174;
+  --semantic-warning: 255 171 64;
+  --semantic-error: 255 82 82;
+
+  --border-standard: rgba(255, 255, 255, 0.08);
+  --border-soft: rgba(255, 255, 255, 0.05);
+  --border-emphasis: rgba(255, 255, 255, 0.12);
+
+  --shadow-card: none;
+  --shadow-dropdown: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --shadow-modal: 0 8px 32px rgba(0, 0, 0, 0.6);
+}
+
+body {
+  background-color: rgb(var(--surface-primary));
+  color: rgb(var(--ink-primary));
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+* {
+  border-color: var(--border-standard);
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(var(--ink-muted));
+  border-radius: 3px;
+}

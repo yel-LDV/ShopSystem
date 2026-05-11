@@ -1,0 +1,65 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: tienda-backend
+
+  # H2 es la base autoritativa siempre activa
+  datasource:
+    url: jdbc:h2:file:./data/tienda;MODE=MySQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
+  h2:
+    console:
+      enabled: false
+      path: /h2-console
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+
+  flyway:
+    enabled: false
+
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USER:}
+    password: ${MAIL_PASS:}
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    default-property-inclusion: non_null
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:cambia-esta-clave-jwt-32-caracteres-minimo}
+    expiration-ms: 86400000
+    refresh-expiration-ms: 604800000
+
+  reorder:
+    cron: ${REORDER_CRON:0 0 * * * *}
+
+  backup:
+    dir: ${BACKUP_DIR:./backups}
+    key: ${BACKUP_KEY:cambia-esta-clave-aes-32-caracteres}
+
+  ticket:
+    voting-duration-minutes: 5
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics

@@ -1,0 +1,39 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:mariadb://${DB_HOST}:${DB_PORT:3306}/${DB_NAME}?useSSL=true&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: ${DB_USER}
+    password: ${DB_PASS}
+    driver-class-name: org.mariadb.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+
+  flyway:
+    enabled: true
+
+app:
+  jwt:
+    secret: ${JWT_SECRET}
+    expiration-ms: 86400000
+    refresh-expiration-ms: 604800000
+
+  reorder:
+    cron: ${REORDER_CRON:0 0 * * * *}
+
+  backup:
+    dir: ${BACKUP_DIR:/app/backups}
+    key: ${BACKUP_KEY}
+
+  ticket:
+    voting-duration-hours: 48
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,prometheus
