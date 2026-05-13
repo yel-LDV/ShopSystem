@@ -5,15 +5,27 @@ import Card from '../../components/ui/Card'
 import Button from '../../components/ui/Button'
 import Input from '../../components/ui/Input'
 import Toast from '../../components/ui/Toast'
-import type { ApiResponse, Product } from '../../types'
+import type { ApiResponse, Product, Batch } from '../../types'
+
+interface CartItem {
+  productId: number
+  batchId: number
+  quantity: number
+  productName: string
+  batchExpiration: string
+  unitPrice: number
+}
 
 export default function NewOrder() {
   const navigate = useNavigate()
   const [query, setQuery] = useState('')
   const [products, setProducts] = useState<Product[]>([])
-  const [cart, setCart] = useState<Map<number, number>>(new Map())
+  const [cart, setCart] = useState<CartItem[]>([])
   const [loading, setLoading] = useState(false)
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
+  const [expandedProduct, setExpandedProduct] = useState<number | null>(null)
+  const [batchesCache, setBatchesCache] = useState<Map<number, Batch[]>>(new Map())
+  const [loadingBatches, setLoadingBatches] = useState(false)
 
   const searchProducts = async () => {
     setLoading(true)
@@ -29,31 +41,73 @@ export default function NewOrder() {
 
   useEffect(() => { searchProducts() }, [])
 
-  const addToCart = (productId: number) => {
+  const toggleExpand = async (productId: number) => {
+    if (expandedProduct === productId) {
+      setExpandedProduct(null)
+      return
+    }
+    setExpandedProduct(productId)
+    if (!batchesCache.has(productId)) {
+      setLoadingBatches(true)
+      try {
+        const res = await api.get<ApiResponse<Batch[]>>(`/store/products/${productId}/batches`)
+        if (res.data.success) {
+          setBatchesCache(prev => {
+            const next = new Map(prev)
+            next.set(productId, res.data.data)
+            return next
+          })
+        }
+      } catch {
+        setToast({ message: 'Error al cargar lotes', type: 'error' })
+      } finally {
+        setLoadingBatches(false)
+      }
+    }
+  }
+
+  const addBatchToCart = (product: Product, batch: Batch) => {
     setCart(prev => {
-      const next = new Map(prev)
-      next.set(productId, (next.get(productId) || 0) + 1)
-      return next
+      const existingIdx = prev.findIndex(
+        i => i.productId === product.id && i.batchId === batch.id
+      )
+      if (existingIdx >= 0) {
+        const next = [...prev]
+        const newQty = next[existingIdx].quantity + 1
+        if (newQty > batch.availableQuantity) return prev
+        next[existingIdx] = { ...next[existingIdx], quantity: newQty }
+        return next
+      }
+      return [...prev, {
+        productId: product.id,
+        batchId: batch.id,
+        quantity: 1,
+        productName: product.name,
+        batchExpiration: batch.expirationDate,
+        unitPrice: product.basePrice,
+      }]
     })
   }
 
-  const removeFromCart = (productId: number) => {
+  const removeFromCart = (index: number) => {
     setCart(prev => {
-      const next = new Map(prev)
-      const count = next.get(productId) || 0
-      if (count <= 1) next.delete(productId)
-      else next.set(productId, count - 1)
+      const next = [...prev]
+      if (next[index].quantity <= 1) {
+        return next.filter((_, i) => i !== index)
+      }
+      next[index] = { ...next[index], quantity: next[index].quantity - 1 }
       return next
     })
   }
 
   const handleCreateOrder = async () => {
-    if (cart.size === 0) return
+    if (cart.length === 0) return
     setLoading(true)
     try {
-      const items = Array.from(cart.entries()).map(([productId, quantity]) => ({
-        productId,
-        quantity,
+      const items = cart.map(c => ({
+        productId: c.productId,
+        batchId: c.batchId,
+        quantity: c.quantity,
       }))
       await api.post('/store/orders', items)
       setToast({ message: 'Pedido creado exitosamente', type: 'success' })
@@ -65,16 +119,21 @@ export default function NewOrder() {
     }
   }
 
-  const cartTotal = Array.from(cart.entries()).reduce((sum, [productId, qty]) => {
-    const product = products.find(p => p.id === productId)
-    return sum + (product?.basePrice || 0) * qty
-  }, 0)
+  const cartTotal = cart.reduce((sum, c) => sum + c.unitPrice * c.quantity, 0)
+
+  const formatDate = (dateStr: string) => {
+    const d = new Date(dateStr)
+    return d.toLocaleDateString('es-MX', { year: 'numeric', month: '2-digit', day: '2-digit' })
+  }
+
+  const getCartQtyForProduct = (productId: number) =>
+    cart.filter(c => c.productId === productId).reduce((s, c) => s + c.quantity, 0)
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-semibold text-ink-primary">Nuevo Pedido</h1>
-        <p className="text-sm text-ink-tertiary mt-1">Busca productos y agrega cantidades</p>
+        <p className="text-sm text-ink-tertiary mt-1">Selecciona productos y elige el lote</p>
       </div>
 
       <div className="flex gap-2">
@@ -97,61 +156,118 @@ export default function NewOrder() {
           ) : products.length === 0 ? (
             <Card><p className="text-sm text-ink-muted text-center py-4">No se encontraron productos</p></Card>
           ) : (
-            products.map(product => (
-              <Card key={product.id}>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-ink-primary">{product.name}</p>
-                    <p className="text-xs text-ink-muted">
-                      {product.supplierName} - Stock: {product.totalStock}
-                      {product.unitAbbreviation ? ` ${product.unitAbbreviation}` : ''}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <span className="text-sm font-medium text-ink-primary tabular-nums">
-                      ${product.basePrice?.toFixed(2)}
-                    </span>
-                    <div className="flex items-center gap-1">
-                      <Button
-                        size="sm"
-                        variant="secondary"
-                        onClick={() => removeFromCart(product.id)}
-                        disabled={!cart.has(product.id)}
-                      >
-                        -
-                      </Button>
-                      <span className="w-8 text-center text-sm tabular-nums">
-                        {cart.get(product.id) || 0}
+            products.map(product => {
+              const isExpanded = expandedProduct === product.id
+              const batches = batchesCache.get(product.id) || []
+              const cartQty = getCartQtyForProduct(product.id)
+              return (
+                <Card key={product.id}>
+                  <div
+                    className="flex items-center justify-between cursor-pointer"
+                    onClick={() => toggleExpand(product.id)}
+                  >
+                    <div>
+                      <p className="text-sm font-medium text-ink-primary">{product.name}</p>
+                      <p className="text-xs text-ink-muted">
+                        {product.supplierName} - Stock total: {product.totalStock}
+                        {product.unitAbbreviation ? ` ${product.unitAbbreviation}` : ''}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      {cartQty > 0 && (
+                        <span className="text-xs bg-primary text-white rounded-full px-2 py-0.5 tabular-nums">
+                          {cartQty} en carrito
+                        </span>
+                      )}
+                      <span className="text-sm font-medium text-ink-primary tabular-nums">
+                        ${product.basePrice?.toFixed(2)}
                       </span>
-                      <Button size="sm" variant="secondary" onClick={() => addToCart(product.id)}>
-                        +
-                      </Button>
+                      <span className="text-xs text-ink-muted">{isExpanded ? '▲' : '▼'}</span>
                     </div>
                   </div>
-                </div>
-              </Card>
-            ))
+
+                  {isExpanded && (
+                    <div className="mt-3 border-t border-border-standard pt-3">
+                      <h4 className="text-xs font-medium text-ink-secondary mb-2">Lotes disponibles</h4>
+                      {loadingBatches && !batchesCache.has(product.id) ? (
+                        <p className="text-xs text-ink-muted py-2">Cargando lotes...</p>
+                      ) : batches.length === 0 ? (
+                        <p className="text-xs text-ink-muted py-2">Sin lotes disponibles</p>
+                      ) : (
+                        <div className="space-y-1">
+                          {batches.map(batch => (
+                            <div
+                              key={batch.id}
+                              className="flex items-center justify-between py-1.5 px-2 bg-surface-secondary rounded text-xs"
+                            >
+                              <div className="flex items-center gap-3">
+                                <span className="text-ink-muted font-mono">Lote #{batch.id}</span>
+                                <span className="text-ink-secondary">
+                                  <span className="font-medium">{batch.availableQuantity}</span> und
+                                </span>
+                                <span className="text-ink-muted">
+                                  Exp: {formatDate(batch.expirationDate)}
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                {batch.purchasePrice && (
+                                  <span className="text-ink-muted text-[10px]">
+                                    Compra: ${batch.purchasePrice.toFixed(2)}
+                                  </span>
+                                )}
+                                <Button
+                                  size="sm"
+                                  variant="secondary"
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    addBatchToCart(product, batch)
+                                  }}
+                                  disabled={batch.availableQuantity <= 0}
+                                >
+                                  +
+                                </Button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </Card>
+              )
+            })
           )}
         </div>
 
         <div>
           <Card className="sticky top-6">
             <h3 className="font-medium text-ink-primary mb-3">Resumen del pedido</h3>
-            {cart.size === 0 ? (
-              <p className="text-sm text-ink-muted">Agrega productos al pedido</p>
+            {cart.length === 0 ? (
+              <p className="text-sm text-ink-muted">Expande un producto y agrega lotes al pedido</p>
             ) : (
               <div className="space-y-3">
-                {Array.from(cart.entries()).map(([productId, qty]) => {
-                  const product = products.find(p => p.id === productId)
-                  return (
-                    <div key={productId} className="flex justify-between text-sm">
-                      <span className="text-ink-secondary">{product?.name} x{qty}</span>
+                {cart.map((c, i) => (
+                  <div key={`${c.productId}-${c.batchId}`} className="flex justify-between text-sm">
+                    <div className="flex-1 min-w-0">
+                      <span className="text-ink-secondary truncate block">
+                        {c.productName} <span className="text-ink-muted text-xs">(Lote #{c.batchId})</span>
+                      </span>
+                      <span className="text-xs text-ink-muted">Exp: {formatDate(c.batchExpiration)}</span>
+                    </div>
+                    <div className="flex items-center gap-2 ml-2 shrink-0">
+                      <button
+                        className="text-xs text-ink-muted hover:text-error-primary"
+                        onClick={() => removeFromCart(i)}
+                      >
+                        -
+                      </button>
+                      <span className="text-ink-primary tabular-nums w-6 text-center">{c.quantity}</span>
                       <span className="text-ink-primary tabular-nums">
-                        ${((product?.basePrice || 0) * qty).toFixed(2)}
+                        ${(c.unitPrice * c.quantity).toFixed(2)}
                       </span>
                     </div>
-                  )
-                })}
+                  </div>
+                ))}
                 <div className="border-t border-border-standard pt-2 flex justify-between text-sm font-medium">
                   <span className="text-ink-primary">Total</span>
                   <span className="text-ink-primary tabular-nums">${cartTotal.toFixed(2)}</span>

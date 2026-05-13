@@ -1,6 +1,6 @@
 package com.tienda.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.*; // already has wildcard, Table included
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "cola_correo")
 @Data
 @Builder
 @NoArgsConstructor

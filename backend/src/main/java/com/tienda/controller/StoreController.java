@@ -51,6 +51,11 @@ public class StoreController {
         return ResponseEntity.ok(ApiResponse.ok(productService.searchProducts(query)));
     }
 
+    @GetMapping("/products/{id}/batches")
+    public ResponseEntity<ApiResponse<List<BatchResponse>>> getProductBatches(@PathVariable Long id) {
+        return ResponseEntity.ok(ApiResponse.ok(productService.getAvailableBatchesForProduct(id)));
+    }
+
     @GetMapping("/inventory")
     public ResponseEntity<ApiResponse<List<StoreInventoryDto>>> getInventory(Authentication auth) {
         Long storeId = getStoreId(auth);

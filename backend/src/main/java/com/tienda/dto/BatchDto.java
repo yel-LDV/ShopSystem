@@ -5,12 +5,16 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrderItemRequest {
-    private Long productId;
+public class BatchDto {
     private int quantity;
-    private Long batchId;
+    private int expirationYear;
+    private int expirationMonth;
+    private int expirationDay;
+    private BigDecimal purchasePrice;
 }

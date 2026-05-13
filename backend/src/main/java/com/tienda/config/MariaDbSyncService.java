@@ -24,25 +24,25 @@ public class MariaDbSyncService implements ApplicationRunner {
     private static final Logger log = LoggerFactory.getLogger(MariaDbSyncService.class);
 
     private static final List<String> TABLE_ORDER = List.of(
-            "users",
-            "admin_user",
-            "store_owner",
-            "supplier",
-            "unit_of_measure",
-            "registration_request",
-            "supplier_product",
-            "batch",
-            "store_inventory",
-            "orders",
-            "order_item",
+            "usuario",
+            "admin_usuario",
+            "dueno_tienda",
+            "proveedor",
+            "unidad_medida",
+            "solicitud_registro",
+            "producto",
+            "lote",
+            "inventario",
+            "orden_compra",
+            "detalle_orden_compra",
             "ticket",
-            "message",
-            "sale",
-            "sale_item",
-            "notification",
-            "audit_log",
-            "price_history",
-            "email_queue"
+            "mensaje",
+            "venta",
+            "detalle_venta",
+            "notificacion",
+            "registro_auditoria",
+            "historial_precio",
+            "cola_correo"
     );
 
     private final DataSource h2DataSource;
@@ -79,19 +79,26 @@ public class MariaDbSyncService implements ApplicationRunner {
 
     private void executeSchema(JdbcTemplate maria) throws Exception {
         log.info("Ejecutando schema DDL en MariaDB...");
-        ClassPathResource resource = new ClassPathResource("db/migration/V1__initial_schema.sql");
-        String sql = new String(resource.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
 
-        String[] statements = sql.split(";");
-        for (String stmt : statements) {
-            String trimmed = stmt.trim();
-            if (trimmed.isEmpty() || trimmed.startsWith("--")) {
+        String[] migrations = {"db/migration/V1__initial_schema.sql", "db/migration/V6__rename_tables_spanish.sql"};
+        for (String migrationPath : migrations) {
+            ClassPathResource resource = new ClassPathResource(migrationPath);
+            if (!resource.exists()) {
+                log.debug("Migración no encontrada: {}", migrationPath);
                 continue;
             }
-            try {
-                maria.execute(trimmed);
-            } catch (Exception e) {
-                log.debug("Ignorando error esperado en DDL: {}", e.getMessage());
+            String sql = new String(resource.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+            String[] statements = sql.split(";");
+            for (String stmt : statements) {
+                String trimmed = stmt.trim();
+                if (trimmed.isEmpty() || trimmed.startsWith("--")) {
+                    continue;
+                }
+                try {
+                    maria.execute(trimmed);
+                } catch (Exception e) {
+                    log.debug("Ignorando error esperado en DDL: {}", e.getMessage());
+                }
             }
         }
         log.info("Schema DDL ejecutado en MariaDB.");

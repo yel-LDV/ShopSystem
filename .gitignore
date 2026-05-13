@@ -24,6 +24,7 @@ backend/*.war
 .DS_Store
 Thumbs.db
 desktop.ini
+target/
 
 # ── Frontend (Node) ──────────────────────────
 frontend/node_modules/

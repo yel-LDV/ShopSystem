@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,6 +25,7 @@ public class OrderService {
     private final StoreOwnerRepository storeOwnerRepository;
     private final SupplierRepository supplierRepository;
     private final SupplierProductRepository productRepository;
+    private final BatchRepository batchRepository;
     private final InventoryService inventoryService;
     private final NotificationService notificationService;
     private final AuditService auditService;
@@ -35,6 +35,7 @@ public class OrderService {
                         StoreOwnerRepository storeOwnerRepository,
                         SupplierRepository supplierRepository,
                         SupplierProductRepository productRepository,
+                        BatchRepository batchRepository,
                         InventoryService inventoryService,
                         NotificationService notificationService,
                         AuditService auditService) {
@@ -43,6 +44,7 @@ public class OrderService {
         this.storeOwnerRepository = storeOwnerRepository;
         this.supplierRepository = supplierRepository;
         this.productRepository = productRepository;
+        this.batchRepository = batchRepository;
         this.inventoryService = inventoryService;
         this.notificationService = notificationService;
         this.auditService = auditService;
@@ -72,6 +74,19 @@ public class OrderService {
             SupplierProduct product = productRepository.findById(itemReq.getProductId())
                     .orElseThrow(() -> new RuntimeException("Producto no encontrado: " + itemReq.getProductId()));
 
+            if (itemReq.getBatchId() != null) {
+                Batch batch = batchRepository.findById(itemReq.getBatchId())
+                        .orElseThrow(() -> new RuntimeException("Lote no encontrado: " + itemReq.getBatchId()));
+                if (!batch.getSupplierProduct().getId().equals(product.getId())) {
+                    throw new RuntimeException("El lote no pertenece al producto seleccionado");
+                }
+                int available = batch.getQuantity() - batch.getReservedQuantity();
+                if (itemReq.getQuantity() > available) {
+                    throw new RuntimeException("Stock insuficiente en lote #" + batch.getId()
+                            + " (disponible: " + available + ", solicitado: " + itemReq.getQuantity() + ")");
+                }
+            }
+
             BigDecimal unitPrice = product.getBasePrice();
 
             OrderItem orderItem = OrderItem.builder()
@@ -79,6 +94,7 @@ public class OrderService {
                     .supplierProduct(product)
                     .quantity(itemReq.getQuantity())
                     .unitPrice(unitPrice)
+                    .batchId(itemReq.getBatchId())
                     .build();
 
             order.getItems().add(orderItem);
@@ -104,18 +120,10 @@ public class OrderService {
             }
         }
 
-        List<SupplierProduct> products = productRepository.findAll().stream()
-                .filter(p -> p.getId().equals(productId))
-                .collect(Collectors.toList());
+        SupplierProduct product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("No hay proveedores para este producto"));
 
-        if (products.isEmpty()) {
-            throw new RuntimeException("No hay proveedores para este producto");
-        }
-
-        return products.stream()
-                .min(Comparator.comparing(SupplierProduct::getBasePrice))
-                .map(SupplierProduct::getSupplier)
-                .orElseThrow(() -> new RuntimeException("No se pudo seleccionar proveedor"));
+        return product.getSupplier();
     }
 
     @Transactional
@@ -135,7 +143,11 @@ public class OrderService {
 
         if (accept) {
             for (OrderItem item : order.getItems()) {
-                inventoryService.reserveBatches(item.getSupplierProduct().getId(), item.getQuantity());
+                if (item.getBatchId() != null) {
+                    inventoryService.reserveBatch(item.getBatchId(), item.getQuantity());
+                } else {
+                    inventoryService.reserveBatches(item.getSupplierProduct().getId(), item.getQuantity());
+                }
             }
             order.setStatus(Order.OrderStatus.ACCEPTED_BY_SUPPLIER);
             order.setRespondedAt(java.time.LocalDateTime.now());
@@ -181,7 +193,11 @@ public class OrderService {
             safeAudit(storeEmail, "ORDER_DISPUTED", "ORDER", order.getId(), "ACCEPTED_BY_SUPPLIER", "DISPUTED: " + request.getDiscrepancyMessage());
         } else {
             for (OrderItem item : order.getItems()) {
-                inventoryService.deductFromBatches(item.getSupplierProduct().getId(), item.getQuantity());
+                if (item.getBatchId() != null) {
+                    inventoryService.deductBatch(item.getBatchId(), item.getQuantity());
+                } else {
+                    inventoryService.deductFromBatches(item.getSupplierProduct().getId(), item.getQuantity());
+                }
                 inventoryService.addOrUpdateInventory(storeOwnerId, item.getSupplierProduct().getId(), item.getQuantity());
             }
             order.setStatus(Order.OrderStatus.RECEIVED);

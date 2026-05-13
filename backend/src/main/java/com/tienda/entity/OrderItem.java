@@ -1,7 +1,7 @@
 package com.tienda.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import jakarta.persistence.*;
+import jakarta.persistence.*; // already has wildcard, Table included
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 
 @Entity
+@Table(name = "detalle_orden_compra")
 @Data
 @Builder
 @NoArgsConstructor
@@ -32,4 +33,6 @@ public class OrderItem {
     private int quantity;
 
     private BigDecimal unitPrice;
+
+    private Long batchId;
 }

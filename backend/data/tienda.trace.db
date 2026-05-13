@@ -1,0 +1,652 @@
+2026-05-12 22:20:21.615879-06:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "USERS" no encontrada
+Table "USERS" not found; SQL statement:
+CREATE TABLE IF NOT EXISTS store_owner (
+    id BIGINT PRIMARY KEY,
+    store_name VARCHAR(255),
+    address VARCHAR(500),
+    favorite_supplier_id BIGINT,
+    FOREIGN KEY (id) REFERENCES users(id)
+) [42102-224]
+2026-05-12 22:20:21.626414-06:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "USERS" no encontrada
+Table "USERS" not found; SQL statement:
+CREATE TABLE IF NOT EXISTS supplier (
+    id BIGINT PRIMARY KEY,
+    company_name VARCHAR(255),
+    contact_phone VARCHAR(50),
+    emergency_email VARCHAR(255),
+    address VARCHAR(500),
+    FOREIGN KEY (id) REFERENCES users(id)
+) [42102-224]
+2026-05-12 22:20:21.632925-06:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "USERS" no encontrada
+Table "USERS" not found; SQL statement:
+CREATE TABLE IF NOT EXISTS admin_user (
+    id BIGINT PRIMARY KEY,
+    FOREIGN KEY (id) REFERENCES users(id)
+) [42102-224]
+2026-05-12 22:20:21.636938-06:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "SUPPLIER" no encontrada
+Table "SUPPLIER" not found; SQL statement:
+CREATE TABLE IF NOT EXISTS supplier_product (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    sku VARCHAR(100),
+    creation_date DATE,
+    expiration_date DATE,
+    base_price DECIMAL(12,2),
+    min_stock INT DEFAULT 0,
+    max_stock INT DEFAULT 0,
+    supplier_id BIGINT,
+    unit_id BIGINT,
+    FOREIGN KEY (supplier_id) REFERENCES supplier(id),
+    FOREIGN KEY (unit_id) REFERENCES unit_of_measure(id)
+) [42102-224]
+2026-05-12 22:20:21.638938-06:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "SUPPLIER_PRODUCT" no encontrada
+Table "SUPPLIER_PRODUCT" not found; SQL statement:
+CREATE TABLE IF NOT EXISTS batch (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    quantity INT NOT NULL DEFAULT 0,
+    reserved_quantity INT NOT NULL DEFAULT 0,
+    expiration_date DATE,
+    purchase_price DECIMAL(12,2),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    supplier_product_id BIGINT,
+    FOREIGN KEY (supplier_product_id) REFERENCES supplier_product(id)
+) [42102-224]
+2026-05-12 22:20:21.640938-06:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "STORE_OWNER" no encontrada
+Table "STORE_OWNER" not found; SQL statement:
+CREATE TABLE IF NOT EXISTS store_inventory (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    store_owner_id BIGINT,
+    supplier_product_id BIGINT,
+    quantity INT NOT NULL DEFAULT 0,
+    last_updated DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (store_owner_id) REFERENCES store_owner(id),
+    FOREIGN KEY (supplier_product_id) REFERENCES supplier_product(id),
+    UNIQUE KEY uk_store_product (store_owner_id, supplier_product_id)
+) [42102-224]
+2026-05-12 22:20:21.642937-06:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "STORE_OWNER" no encontrada
+Table "STORE_OWNER" not found; SQL statement:
+CREATE TABLE IF NOT EXISTS orders (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    store_owner_id BIGINT,
+    supplier_id BIGINT,
+    status VARCHAR(50) NOT NULL DEFAULT 'PENDING',
+    is_automatic BOOLEAN DEFAULT FALSE,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    responded_at DATETIME,
+    received_at DATETIME,
+    rejection_reason VARCHAR(500),
+    FOREIGN KEY (store_owner_id) REFERENCES store_owner(id),
+    FOREIGN KEY (supplier_id) REFERENCES supplier(id)
+) [42102-224]
+2026-05-12 22:20:21.644118-06:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "ORDERS" no encontrada
+Table "ORDERS" not found; SQL statement:
+CREATE TABLE IF NOT EXISTS order_item (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    order_id BIGINT NOT NULL,
+    supplier_product_id BIGINT,
+    quantity INT NOT NULL DEFAULT 0,
+    unit_price DECIMAL(12,2),
+    FOREIGN KEY (order_id) REFERENCES orders(id),
+    FOREIGN KEY (supplier_product_id) REFERENCES supplier_product(id)
+) [42102-224]
+2026-05-12 22:20:21.653680-06:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "USERS" no encontrada
+Table "USERS" not found; SQL statement:
+CREATE TABLE IF NOT EXISTS notification (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT,
+    message VARCHAR(500),
+    is_read BOOLEAN DEFAULT FALSE,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    type VARCHAR(50),
+    reference_id BIGINT,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+) [42102-224]
+2026-05-12 22:20:21.656201-06:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "SUPPLIER_PRODUCT" no encontrada
+Table "SUPPLIER_PRODUCT" not found; SQL statement:
+CREATE TABLE IF NOT EXISTS price_history (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    supplier_product_id BIGINT,
+    old_price DECIMAL(12,2),
+    new_price DECIMAL(12,2),
+    changed_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (supplier_product_id) REFERENCES supplier_product(id)
+) [42102-224]
+2026-05-12 22:20:21.660202-06:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "ADMIN_USER" no encontrada
+Table "ADMIN_USER" not found; SQL statement:
+ALTER TABLE admin_user RENAME TO admin_usuario [42102-224]
+2026-05-12 22:20:21.660202-06:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "STORE_OWNER" no encontrada
+Table "STORE_OWNER" not found; SQL statement:
+ALTER TABLE store_owner RENAME TO dueno_tienda [42102-224]
+2026-05-12 22:20:21.661206-06:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "SUPPLIER" no encontrada
+Table "SUPPLIER" not found; SQL statement:
+ALTER TABLE supplier RENAME TO proveedor [42102-224]
+2026-05-12 22:20:21.662202-06:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "SOLICITUD_REGISTRO" ya existe
+Table "SOLICITUD_REGISTRO" already exists; SQL statement:
+ALTER TABLE registration_request RENAME TO solicitud_registro [42101-224]
+2026-05-12 22:20:21.663203-06:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "BATCH" no encontrada
+Table "BATCH" not found; SQL statement:
+ALTER TABLE batch RENAME TO lote [42102-224]
+2026-05-12 22:20:21.663203-06:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "STORE_INVENTORY" no encontrada
+Table "STORE_INVENTORY" not found; SQL statement:
+ALTER TABLE store_inventory RENAME TO inventario [42102-224]
+2026-05-12 22:20:21.665041-06:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "ORDER_ITEM" no encontrada
+Table "ORDER_ITEM" not found; SQL statement:
+ALTER TABLE order_item RENAME TO detalle_orden_compra [42102-224]
+2026-05-12 22:20:21.665041-06:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "SALE_ITEM" no encontrada
+Table "SALE_ITEM" not found; SQL statement:
+ALTER TABLE sale_item RENAME TO detalle_venta [42102-224]
+2026-05-12 22:20:21.666054-06:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "PRICE_HISTORY" no encontrada
+Table "PRICE_HISTORY" not found; SQL statement:
+ALTER TABLE price_history RENAME TO historial_precio [42102-224]
+2026-05-12 22:20:21.666054-06:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "COLA_CORREO" ya existe
+Table "COLA_CORREO" already exists; SQL statement:
+ALTER TABLE email_queue RENAME TO cola_correo [42101-224]
+2026-05-12 22:24:15.997177-06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "USERS" no encontrada
+Table "USERS" not found; SQL statement:
+CREATE TABLE IF NOT EXISTS store_owner (
+    id BIGINT PRIMARY KEY,
+    store_name VARCHAR(255),
+    address VARCHAR(500),
+    favorite_supplier_id BIGINT,
+    FOREIGN KEY (id) REFERENCES users(id)
+) [42102-224]
+2026-05-12 22:24:16.020207-06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "USERS" no encontrada
+Table "USERS" not found; SQL statement:
+CREATE TABLE IF NOT EXISTS supplier (
+    id BIGINT PRIMARY KEY,
+    company_name VARCHAR(255),
+    contact_phone VARCHAR(50),
+    emergency_email VARCHAR(255),
+    address VARCHAR(500),
+    FOREIGN KEY (id) REFERENCES users(id)
+) [42102-224]
+2026-05-12 22:24:16.024209-06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "USERS" no encontrada
+Table "USERS" not found; SQL statement:
+CREATE TABLE IF NOT EXISTS admin_user (
+    id BIGINT PRIMARY KEY,
+    FOREIGN KEY (id) REFERENCES users(id)
+) [42102-224]
+2026-05-12 22:24:16.030031-06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "SUPPLIER" no encontrada
+Table "SUPPLIER" not found; SQL statement:
+CREATE TABLE IF NOT EXISTS supplier_product (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    sku VARCHAR(100),
+    creation_date DATE,
+    expiration_date DATE,
+    base_price DECIMAL(12,2),
+    min_stock INT DEFAULT 0,
+    max_stock INT DEFAULT 0,
+    supplier_id BIGINT,
+    unit_id BIGINT,
+    FOREIGN KEY (supplier_id) REFERENCES supplier(id),
+    FOREIGN KEY (unit_id) REFERENCES unit_of_measure(id)
+) [42102-224]
+2026-05-12 22:24:16.033034-06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "SUPPLIER_PRODUCT" no encontrada
+Table "SUPPLIER_PRODUCT" not found; SQL statement:
+CREATE TABLE IF NOT EXISTS batch (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    quantity INT NOT NULL DEFAULT 0,
+    reserved_quantity INT NOT NULL DEFAULT 0,
+    expiration_date DATE,
+    purchase_price DECIMAL(12,2),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    supplier_product_id BIGINT,
+    FOREIGN KEY (supplier_product_id) REFERENCES supplier_product(id)
+) [42102-224]
+2026-05-12 22:24:16.038111-06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "STORE_OWNER" no encontrada
+Table "STORE_OWNER" not found; SQL statement:
+CREATE TABLE IF NOT EXISTS store_inventory (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    store_owner_id BIGINT,
+    supplier_product_id BIGINT,
+    quantity INT NOT NULL DEFAULT 0,
+    last_updated DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (store_owner_id) REFERENCES store_owner(id),
+    FOREIGN KEY (supplier_product_id) REFERENCES supplier_product(id),
+    UNIQUE KEY uk_store_product (store_owner_id, supplier_product_id)
+) [42102-224]
+2026-05-12 22:24:16.041750-06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "STORE_OWNER" no encontrada
+Table "STORE_OWNER" not found; SQL statement:
+CREATE TABLE IF NOT EXISTS orders (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    store_owner_id BIGINT,
+    supplier_id BIGINT,
+    status VARCHAR(50) NOT NULL DEFAULT 'PENDING',
+    is_automatic BOOLEAN DEFAULT FALSE,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    responded_at DATETIME,
+    received_at DATETIME,
+    rejection_reason VARCHAR(500),
+    FOREIGN KEY (store_owner_id) REFERENCES store_owner(id),
+    FOREIGN KEY (supplier_id) REFERENCES supplier(id)
+) [42102-224]
+2026-05-12 22:24:16.043792-06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "ORDERS" no encontrada
+Table "ORDERS" not found; SQL statement:
+CREATE TABLE IF NOT EXISTS order_item (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    order_id BIGINT NOT NULL,
+    supplier_product_id BIGINT,
+    quantity INT NOT NULL DEFAULT 0,
+    unit_price DECIMAL(12,2),
+    FOREIGN KEY (order_id) REFERENCES orders(id),
+    FOREIGN KEY (supplier_product_id) REFERENCES supplier_product(id)
+) [42102-224]
+2026-05-12 22:24:16.050834-06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "USERS" no encontrada
+Table "USERS" not found; SQL statement:
+CREATE TABLE IF NOT EXISTS notification (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT,
+    message VARCHAR(500),
+    is_read BOOLEAN DEFAULT FALSE,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    type VARCHAR(50),
+    reference_id BIGINT,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+) [42102-224]
+2026-05-12 22:24:16.054725-06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "SUPPLIER_PRODUCT" no encontrada
+Table "SUPPLIER_PRODUCT" not found; SQL statement:
+CREATE TABLE IF NOT EXISTS price_history (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    supplier_product_id BIGINT,
+    old_price DECIMAL(12,2),
+    new_price DECIMAL(12,2),
+    changed_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (supplier_product_id) REFERENCES supplier_product(id)
+) [42102-224]
+2026-05-12 22:24:16.060320-06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "ADMIN_USER" no encontrada
+Table "ADMIN_USER" not found; SQL statement:
+ALTER TABLE admin_user RENAME TO admin_usuario [42102-224]
+2026-05-12 22:24:16.061317-06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "STORE_OWNER" no encontrada
+Table "STORE_OWNER" not found; SQL statement:
+ALTER TABLE store_owner RENAME TO dueno_tienda [42102-224]
+2026-05-12 22:24:16.062331-06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "SUPPLIER" no encontrada
+Table "SUPPLIER" not found; SQL statement:
+ALTER TABLE supplier RENAME TO proveedor [42102-224]
+2026-05-12 22:24:16.062331-06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "SOLICITUD_REGISTRO" ya existe
+Table "SOLICITUD_REGISTRO" already exists; SQL statement:
+ALTER TABLE registration_request RENAME TO solicitud_registro [42101-224]
+2026-05-12 22:24:16.063318-06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "BATCH" no encontrada
+Table "BATCH" not found; SQL statement:
+ALTER TABLE batch RENAME TO lote [42102-224]
+2026-05-12 22:24:16.064317-06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "STORE_INVENTORY" no encontrada
+Table "STORE_INVENTORY" not found; SQL statement:
+ALTER TABLE store_inventory RENAME TO inventario [42102-224]
+2026-05-12 22:24:16.064317-06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "ORDER_ITEM" no encontrada
+Table "ORDER_ITEM" not found; SQL statement:
+ALTER TABLE order_item RENAME TO detalle_orden_compra [42102-224]
+2026-05-12 22:24:16.065321-06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "SALE_ITEM" no encontrada
+Table "SALE_ITEM" not found; SQL statement:
+ALTER TABLE sale_item RENAME TO detalle_venta [42102-224]
+2026-05-12 22:24:16.066832-06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "PRICE_HISTORY" no encontrada
+Table "PRICE_HISTORY" not found; SQL statement:
+ALTER TABLE price_history RENAME TO historial_precio [42102-224]
+2026-05-12 22:24:16.067847-06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "COLA_CORREO" ya existe
+Table "COLA_CORREO" already exists; SQL statement:
+ALTER TABLE email_queue RENAME TO cola_correo [42101-224]
+2026-05-12 22:27:36.954852-06:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "USERS" no encontrada
+Table "USERS" not found; SQL statement:
+CREATE TABLE IF NOT EXISTS store_owner (
+    id BIGINT PRIMARY KEY,
+    store_name VARCHAR(255),
+    address VARCHAR(500),
+    favorite_supplier_id BIGINT,
+    FOREIGN KEY (id) REFERENCES users(id)
+) [42102-224]
+2026-05-12 22:27:36.973740-06:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "USERS" no encontrada
+Table "USERS" not found; SQL statement:
+CREATE TABLE IF NOT EXISTS supplier (
+    id BIGINT PRIMARY KEY,
+    company_name VARCHAR(255),
+    contact_phone VARCHAR(50),
+    emergency_email VARCHAR(255),
+    address VARCHAR(500),
+    FOREIGN KEY (id) REFERENCES users(id)
+) [42102-224]
+2026-05-12 22:27:36.975734-06:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "USERS" no encontrada
+Table "USERS" not found; SQL statement:
+CREATE TABLE IF NOT EXISTS admin_user (
+    id BIGINT PRIMARY KEY,
+    FOREIGN KEY (id) REFERENCES users(id)
+) [42102-224]
+2026-05-12 22:27:36.977733-06:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "SUPPLIER" no encontrada
+Table "SUPPLIER" not found; SQL statement:
+CREATE TABLE IF NOT EXISTS supplier_product (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    sku VARCHAR(100),
+    creation_date DATE,
+    expiration_date DATE,
+    base_price DECIMAL(12,2),
+    min_stock INT DEFAULT 0,
+    max_stock INT DEFAULT 0,
+    supplier_id BIGINT,
+    unit_id BIGINT,
+    FOREIGN KEY (supplier_id) REFERENCES supplier(id),
+    FOREIGN KEY (unit_id) REFERENCES unit_of_measure(id)
+) [42102-224]
+2026-05-12 22:27:36.978734-06:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "SUPPLIER_PRODUCT" no encontrada
+Table "SUPPLIER_PRODUCT" not found; SQL statement:
+CREATE TABLE IF NOT EXISTS batch (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    quantity INT NOT NULL DEFAULT 0,
+    reserved_quantity INT NOT NULL DEFAULT 0,
+    expiration_date DATE,
+    purchase_price DECIMAL(12,2),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    supplier_product_id BIGINT,
+    FOREIGN KEY (supplier_product_id) REFERENCES supplier_product(id)
+) [42102-224]
+2026-05-12 22:27:36.981733-06:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "STORE_OWNER" no encontrada
+Table "STORE_OWNER" not found; SQL statement:
+CREATE TABLE IF NOT EXISTS store_inventory (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    store_owner_id BIGINT,
+    supplier_product_id BIGINT,
+    quantity INT NOT NULL DEFAULT 0,
+    last_updated DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (store_owner_id) REFERENCES store_owner(id),
+    FOREIGN KEY (supplier_product_id) REFERENCES supplier_product(id),
+    UNIQUE KEY uk_store_product (store_owner_id, supplier_product_id)
+) [42102-224]
+2026-05-12 22:27:36.983239-06:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "STORE_OWNER" no encontrada
+Table "STORE_OWNER" not found; SQL statement:
+CREATE TABLE IF NOT EXISTS orders (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    store_owner_id BIGINT,
+    supplier_id BIGINT,
+    status VARCHAR(50) NOT NULL DEFAULT 'PENDING',
+    is_automatic BOOLEAN DEFAULT FALSE,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    responded_at DATETIME,
+    received_at DATETIME,
+    rejection_reason VARCHAR(500),
+    FOREIGN KEY (store_owner_id) REFERENCES store_owner(id),
+    FOREIGN KEY (supplier_id) REFERENCES supplier(id)
+) [42102-224]
+2026-05-12 22:27:36.985245-06:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "ORDERS" no encontrada
+Table "ORDERS" not found; SQL statement:
+CREATE TABLE IF NOT EXISTS order_item (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    order_id BIGINT NOT NULL,
+    supplier_product_id BIGINT,
+    quantity INT NOT NULL DEFAULT 0,
+    unit_price DECIMAL(12,2),
+    FOREIGN KEY (order_id) REFERENCES orders(id),
+    FOREIGN KEY (supplier_product_id) REFERENCES supplier_product(id)
+) [42102-224]
+2026-05-12 22:27:36.988753-06:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "USERS" no encontrada
+Table "USERS" not found; SQL statement:
+CREATE TABLE IF NOT EXISTS notification (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT,
+    message VARCHAR(500),
+    is_read BOOLEAN DEFAULT FALSE,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    type VARCHAR(50),
+    reference_id BIGINT,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+) [42102-224]
+2026-05-12 22:27:36.990787-06:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "SUPPLIER_PRODUCT" no encontrada
+Table "SUPPLIER_PRODUCT" not found; SQL statement:
+CREATE TABLE IF NOT EXISTS price_history (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    supplier_product_id BIGINT,
+    old_price DECIMAL(12,2),
+    new_price DECIMAL(12,2),
+    changed_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (supplier_product_id) REFERENCES supplier_product(id)
+) [42102-224]
+2026-05-12 22:27:36.994324-06:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "ADMIN_USER" no encontrada
+Table "ADMIN_USER" not found; SQL statement:
+ALTER TABLE admin_user RENAME TO admin_usuario [42102-224]
+2026-05-12 22:27:36.995317-06:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "STORE_OWNER" no encontrada
+Table "STORE_OWNER" not found; SQL statement:
+ALTER TABLE store_owner RENAME TO dueno_tienda [42102-224]
+2026-05-12 22:27:36.995317-06:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "SUPPLIER" no encontrada
+Table "SUPPLIER" not found; SQL statement:
+ALTER TABLE supplier RENAME TO proveedor [42102-224]
+2026-05-12 22:27:36.996390-06:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "SOLICITUD_REGISTRO" ya existe
+Table "SOLICITUD_REGISTRO" already exists; SQL statement:
+ALTER TABLE registration_request RENAME TO solicitud_registro [42101-224]
+2026-05-12 22:27:36.996390-06:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "BATCH" no encontrada
+Table "BATCH" not found; SQL statement:
+ALTER TABLE batch RENAME TO lote [42102-224]
+2026-05-12 22:27:36.997390-06:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "STORE_INVENTORY" no encontrada
+Table "STORE_INVENTORY" not found; SQL statement:
+ALTER TABLE store_inventory RENAME TO inventario [42102-224]
+2026-05-12 22:27:36.998389-06:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "ORDER_ITEM" no encontrada
+Table "ORDER_ITEM" not found; SQL statement:
+ALTER TABLE order_item RENAME TO detalle_orden_compra [42102-224]
+2026-05-12 22:27:36.998389-06:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "SALE_ITEM" no encontrada
+Table "SALE_ITEM" not found; SQL statement:
+ALTER TABLE sale_item RENAME TO detalle_venta [42102-224]
+2026-05-12 22:27:36.999427-06:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "PRICE_HISTORY" no encontrada
+Table "PRICE_HISTORY" not found; SQL statement:
+ALTER TABLE price_history RENAME TO historial_precio [42102-224]
+2026-05-12 22:27:36.999427-06:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "COLA_CORREO" ya existe
+Table "COLA_CORREO" already exists; SQL statement:
+ALTER TABLE email_queue RENAME TO cola_correo [42101-224]
+2026-05-12 22:38:22.109723-06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "USERS" no encontrada
+Table "USERS" not found; SQL statement:
+CREATE TABLE IF NOT EXISTS store_owner (
+    id BIGINT PRIMARY KEY,
+    store_name VARCHAR(255),
+    address VARCHAR(500),
+    favorite_supplier_id BIGINT,
+    FOREIGN KEY (id) REFERENCES users(id)
+) [42102-224]
+2026-05-12 22:38:22.118564-06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "USERS" no encontrada
+Table "USERS" not found; SQL statement:
+CREATE TABLE IF NOT EXISTS supplier (
+    id BIGINT PRIMARY KEY,
+    company_name VARCHAR(255),
+    contact_phone VARCHAR(50),
+    emergency_email VARCHAR(255),
+    address VARCHAR(500),
+    FOREIGN KEY (id) REFERENCES users(id)
+) [42102-224]
+2026-05-12 22:38:22.118564-06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "USERS" no encontrada
+Table "USERS" not found; SQL statement:
+CREATE TABLE IF NOT EXISTS admin_user (
+    id BIGINT PRIMARY KEY,
+    FOREIGN KEY (id) REFERENCES users(id)
+) [42102-224]
+2026-05-12 22:38:22.120125-06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "SUPPLIER" no encontrada
+Table "SUPPLIER" not found; SQL statement:
+CREATE TABLE IF NOT EXISTS supplier_product (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    sku VARCHAR(100),
+    creation_date DATE,
+    expiration_date DATE,
+    base_price DECIMAL(12,2),
+    min_stock INT DEFAULT 0,
+    max_stock INT DEFAULT 0,
+    supplier_id BIGINT,
+    unit_id BIGINT,
+    FOREIGN KEY (supplier_id) REFERENCES supplier(id),
+    FOREIGN KEY (unit_id) REFERENCES unit_of_measure(id)
+) [42102-224]
+2026-05-12 22:38:22.121154-06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "SUPPLIER_PRODUCT" no encontrada
+Table "SUPPLIER_PRODUCT" not found; SQL statement:
+CREATE TABLE IF NOT EXISTS batch (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    quantity INT NOT NULL DEFAULT 0,
+    reserved_quantity INT NOT NULL DEFAULT 0,
+    expiration_date DATE,
+    purchase_price DECIMAL(12,2),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    supplier_product_id BIGINT,
+    FOREIGN KEY (supplier_product_id) REFERENCES supplier_product(id)
+) [42102-224]
+2026-05-12 22:38:22.121154-06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "STORE_OWNER" no encontrada
+Table "STORE_OWNER" not found; SQL statement:
+CREATE TABLE IF NOT EXISTS store_inventory (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    store_owner_id BIGINT,
+    supplier_product_id BIGINT,
+    quantity INT NOT NULL DEFAULT 0,
+    last_updated DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (store_owner_id) REFERENCES store_owner(id),
+    FOREIGN KEY (supplier_product_id) REFERENCES supplier_product(id),
+    UNIQUE KEY uk_store_product (store_owner_id, supplier_product_id)
+) [42102-224]
+2026-05-12 22:38:22.122908-06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "STORE_OWNER" no encontrada
+Table "STORE_OWNER" not found; SQL statement:
+CREATE TABLE IF NOT EXISTS orders (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    store_owner_id BIGINT,
+    supplier_id BIGINT,
+    status VARCHAR(50) NOT NULL DEFAULT 'PENDING',
+    is_automatic BOOLEAN DEFAULT FALSE,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    responded_at DATETIME,
+    received_at DATETIME,
+    rejection_reason VARCHAR(500),
+    FOREIGN KEY (store_owner_id) REFERENCES store_owner(id),
+    FOREIGN KEY (supplier_id) REFERENCES supplier(id)
+) [42102-224]
+2026-05-12 22:38:22.122908-06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "ORDERS" no encontrada
+Table "ORDERS" not found; SQL statement:
+CREATE TABLE IF NOT EXISTS order_item (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    order_id BIGINT NOT NULL,
+    supplier_product_id BIGINT,
+    quantity INT NOT NULL DEFAULT 0,
+    unit_price DECIMAL(12,2),
+    FOREIGN KEY (order_id) REFERENCES orders(id),
+    FOREIGN KEY (supplier_product_id) REFERENCES supplier_product(id)
+) [42102-224]
+2026-05-12 22:38:22.122908-06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "USERS" no encontrada
+Table "USERS" not found; SQL statement:
+CREATE TABLE IF NOT EXISTS notification (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT,
+    message VARCHAR(500),
+    is_read BOOLEAN DEFAULT FALSE,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    type VARCHAR(50),
+    reference_id BIGINT,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+) [42102-224]
+2026-05-12 22:38:22.122908-06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "SUPPLIER_PRODUCT" no encontrada
+Table "SUPPLIER_PRODUCT" not found; SQL statement:
+CREATE TABLE IF NOT EXISTS price_history (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    supplier_product_id BIGINT,
+    old_price DECIMAL(12,2),
+    new_price DECIMAL(12,2),
+    changed_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (supplier_product_id) REFERENCES supplier_product(id)
+) [42102-224]
+2026-05-12 22:38:22.126954-06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "ADMIN_USER" no encontrada
+Table "ADMIN_USER" not found; SQL statement:
+ALTER TABLE admin_user RENAME TO admin_usuario [42102-224]
+2026-05-12 22:38:22.126954-06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "STORE_OWNER" no encontrada
+Table "STORE_OWNER" not found; SQL statement:
+ALTER TABLE store_owner RENAME TO dueno_tienda [42102-224]
+2026-05-12 22:38:22.126954-06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "SUPPLIER" no encontrada
+Table "SUPPLIER" not found; SQL statement:
+ALTER TABLE supplier RENAME TO proveedor [42102-224]
+2026-05-12 22:38:22.126954-06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "SOLICITUD_REGISTRO" ya existe
+Table "SOLICITUD_REGISTRO" already exists; SQL statement:
+ALTER TABLE registration_request RENAME TO solicitud_registro [42101-224]
+2026-05-12 22:38:22.126954-06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "BATCH" no encontrada
+Table "BATCH" not found; SQL statement:
+ALTER TABLE batch RENAME TO lote [42102-224]
+2026-05-12 22:38:22.126954-06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "STORE_INVENTORY" no encontrada
+Table "STORE_INVENTORY" not found; SQL statement:
+ALTER TABLE store_inventory RENAME TO inventario [42102-224]
+2026-05-12 22:38:22.126954-06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "ORDER_ITEM" no encontrada
+Table "ORDER_ITEM" not found; SQL statement:
+ALTER TABLE order_item RENAME TO detalle_orden_compra [42102-224]
+2026-05-12 22:38:22.126954-06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "SALE_ITEM" no encontrada
+Table "SALE_ITEM" not found; SQL statement:
+ALTER TABLE sale_item RENAME TO detalle_venta [42102-224]
+2026-05-12 22:38:22.126954-06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "PRICE_HISTORY" no encontrada
+Table "PRICE_HISTORY" not found; SQL statement:
+ALTER TABLE price_history RENAME TO historial_precio [42102-224]
+2026-05-12 22:38:22.126954-06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "COLA_CORREO" ya existe
+Table "COLA_CORREO" already exists; SQL statement:
+ALTER TABLE email_queue RENAME TO cola_correo [42101-224]

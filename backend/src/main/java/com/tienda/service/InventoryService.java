@@ -102,6 +102,7 @@ public class InventoryService {
             int available = batch.getQuantity() - batch.getReservedQuantity();
             int toDeduct = Math.min(remaining, available);
             batch.setQuantity(batch.getQuantity() - toDeduct);
+            batch.setReservedQuantity(batch.getReservedQuantity() - toDeduct);
             batchRepository.save(batch);
             remaining -= toDeduct;
         }
@@ -142,5 +143,32 @@ public class InventoryService {
             batchRepository.save(batch);
             remaining -= toRelease;
         }
+    }
+
+    @Transactional
+    public void reserveBatch(Long batchId, int quantity) {
+        Batch batch = batchRepository.findById(batchId)
+                .orElseThrow(() -> new RuntimeException("Lote no encontrado: " + batchId));
+        int available = batch.getQuantity() - batch.getReservedQuantity();
+        if (quantity > available) {
+            throw new RuntimeException("Stock insuficiente en lote #" + batchId
+                    + " (disponible: " + available + ", solicitado: " + quantity + ")");
+        }
+        batch.setReservedQuantity(batch.getReservedQuantity() + quantity);
+        batchRepository.save(batch);
+    }
+
+    @Transactional
+    public void deductBatch(Long batchId, int quantity) {
+        Batch batch = batchRepository.findById(batchId)
+                .orElseThrow(() -> new RuntimeException("Lote no encontrado: " + batchId));
+        int available = batch.getQuantity() - batch.getReservedQuantity();
+        if (quantity > available) {
+            throw new RuntimeException("Stock insuficiente en lote #" + batchId
+                    + " (disponible: " + available + ", solicitado: " + quantity + ")");
+        }
+        batch.setQuantity(batch.getQuantity() - quantity);
+        batch.setReservedQuantity(batch.getReservedQuantity() - quantity);
+        batchRepository.save(batch);
     }
 }

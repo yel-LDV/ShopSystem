@@ -19,7 +19,93 @@ Proyecto educativo — Fundamentos de Bases de Datos, 4to semestre.
 - **MariaDB** es un **mirror** — al arrancar, si esta disponible en `localhost:3307`, se sincroniza automaticamente desde H2 (schema + datos)
 - Si MariaDB no esta disponible, la app funciona normalmente solo con H2
 - `ddl-auto: update` en H2 — las tablas se crean/actualizan automaticamente
-- La sincronizacion copia las 17 tablas en orden respetando dependencias
+- La sincronizacion copia las 19 tablas en orden respetando dependencias
+
+## Diagrama de Base de Datos (ER)
+
+```
+┌──────────────────────────────────────────────────────────────────┐
+│                         USUARIO                                  │
+│  id, email, password, full_name, enabled, role, time_zone       │
+└────────┬──────────┬──────────┬──────────────────────────────────┘
+         │          │          │
+    ┌────▼───┐ ┌───▼──────┐ ┌─▼──────────┐
+    │ ADMIN  │ │  DUENO   │ │ PROVEEDOR   │
+    │USUARIO │ │ TIENDA   │ │             │
+    │        │ │store_name│ │company_name │
+    │        │ │address   │ │contact_phone│
+    │        │ │favorite_ │ │emergency_   │
+    │        │ │supplier  │ │email        │
+    │        │ │          │ │address      │
+    └────────┘ └──┬───────┘ └┬──────┬─────┘
+                  │          │      │
+      ┌───────────┘          │      └──────────────┐
+      ▼                      ▼                     ▼
+┌──────────┐   ┌──────────┐   ┌──────────┐   ┌──────────┐
+│INVENTARIO│   │  ORDEN   │   │ PRODUCTO │   │UNIDAD    │
+│          │   │  COMPRA  │   │          │   │MEDIDA    │
+│cantidad  │   │          │   │nombre    │   │          │
+│stock_min │   │estado    │   │codigo    │   │nombre    │
+│stock_max │   │es_auto   │   │precio    │   │abrev     │
+│ult_act   │   │fechas    │   │stock_min │   └──────────┘
+└──┬───────┘   └──┬───────┘   │stock_max │        ▲
+   │              │           └──┬───┬───┘        │
+   │  ┌───────────┘              │   │            │
+   │  ▼                          │   └────────────┘
+   │ ┌──────────────┐            │
+   │ │DETALLE_ORDEN │            │
+   │ │   COMPRA     │            │
+   │ │cantidad      │            │
+   │ │precio_unit   │            │
+   │ └──────────────┘            │
+   │                             │
+   ▼                             ▼
+┌──────────┐   ┌──────────┐   ┌──────────┐   ┌──────────┐
+│  LOTE    │   │  VENTA   │   │ HISTORIAL│   │  TICKET  │
+│cantidad  │   │          │   │  PRECIO  │   │          │
+│reservada │   │fecha     │   │          │   │estado    │
+│fecha_exp │   │total     │   │precio_ant│   │votos     │
+│precio    │   └──┬───────┘   │precio_nue│   │negocia   │
+└──┬───────┘      │           └──────────┘   └──┬───────┘
+   │         ┌────▼───────┐                     │
+   │         │DETALLE     │              ┌──────▼───────┐
+   │         │  VENTA     │              │   MENSAJE    │
+   │         │cantidad    │              │contenido     │
+   │         │precio_unit │              │rol_remitente│
+   │         └────────────┘              └──────────────┘
+   │
+   ▼
+┌──────────┐   ┌───────────┐   ┌──────────┐   ┌──────────┐
+│NOTIFICACION│ │SOLICITUD  │   │ REGISTRO │   │  COLA    │
+│mensaje   │   │REGISTRO   │   │AUDITORIA │   │ CORREO   │
+│leida     │   │estado     │   │accion    │   │asunto    │
+│tipo      │   │datos      │   │entidad   │   │reintentos│
+└──────────┘   └───────────┘   └──────────┘   └──────────┘
+```
+
+### Tablas (nombre en español)
+
+| Tabla | Descripción |
+|---|---|
+| `usuario` | Usuarios base (herencia JOINED) |
+| `admin_usuario` | Administradores (extiende usuario) |
+| `dueno_tienda` | Dueños de tienda (extiende usuario) |
+| `proveedor` | Proveedores (extiende usuario) |
+| `unidad_medida` | Catálogo de unidades de medida |
+| `producto` | Productos de proveedores |
+| `lote` | Lotes/batches de producto (cantidad, precio, expiración) |
+| `inventario` | Stock por tienda con umbrales min/max |
+| `orden_compra` | Órdenes de compra (tienda → proveedor) |
+| `detalle_orden_compra` | Líneas de cada orden |
+| `ticket` | Tickets de disputa/negociación |
+| `mensaje` | Mensajes del chat de tickets |
+| `venta` | Ventas realizadas (POS) |
+| `detalle_venta` | Líneas de cada venta |
+| `notificacion` | Notificaciones en tiempo real |
+| `solicitud_registro` | Solicitudes de registro pendientes |
+| `registro_auditoria` | Log de acciones del sistema |
+| `historial_precio` | Historial de cambios de precio |
+| `cola_correo` | Correos pendientes de envío |
 
 ## Roles
 

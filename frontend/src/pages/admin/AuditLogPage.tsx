@@ -19,7 +19,7 @@ export default function AuditLogPage() {
     try {
       const url = username ? `/admin/audit/search?username=${username}` : '/admin/audit'
       const res = await api.get<ApiResponse<{ content: AuditLogEntry[] }>>(url)
-      if (res.data.success) setLogs(res.data.data.content || res.data.data as any || [])
+      if (res.data.success) setLogs(res.data.data.content || [])
     } catch (err: any) {
       setError(err.response?.data?.message || 'Error al cargar auditoria')
       setLogs([])
@@ -36,9 +36,9 @@ export default function AuditLogPage() {
     { key: 'entityType', label: 'Entidad' },
     { key: 'entityId', label: 'ID' },
     {
-      key: 'timestamp',
+      key: 'createdAt',
       label: 'Fecha',
-      render: (item: AuditLogEntry) => new Date(item.timestamp).toLocaleString(),
+      render: (item: AuditLogEntry) => new Date(item.createdAt).toLocaleString(),
     },
   ]
 

@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Builder
@@ -29,4 +30,5 @@ public class ProductDto {
     private String unitAbbreviation;
     private int totalStock;
     private LocalDateTime lastUpdated;
+    private List<BatchDto> batches;
 }

@@ -14,6 +14,24 @@ export interface LoginResponse {
   userId: number
 }
 
+export interface CreateBatchRequest {
+  quantity: number
+  expirationYear: number
+  expirationMonth: number
+  expirationDay: number
+  purchasePrice?: number
+}
+
+export interface Batch {
+  id: number
+  quantity: number
+  availableQuantity: number
+  expirationDate: string
+  purchasePrice: number
+  createdAt: string
+  productId: number
+}
+
 export interface Product {
   id: number
   code: string | null
@@ -30,6 +48,7 @@ export interface Product {
   creationDate: string
   expirationDate: string | null
   lastUpdated?: string
+  batches?: CreateBatchRequest[]
 }
 
 export interface SaleItem {
@@ -140,10 +159,10 @@ export interface AuditLogEntry {
   username: string
   action: string
   entityType: string
-  entityId: number
+  entityId: number | null
   oldValue: string | null
   newValue: string | null
-  timestamp: string
+  createdAt: string
 }
 
 export interface ApiResponse<T> {

@@ -1,0 +1,61 @@
+﻿[INFO] Scanning for projects...
+[INFO] 
+[INFO] ---------------------< com.tienda:tienda-backend >----------------------
+[INFO] Building tienda-backend 1.0.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] >>> spring-boot:3.2.5:run (default-cli) > test-compile @ tienda-backend >>>
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ tienda-backend ---
+[INFO] Copying 4 resources from src\main\resources to target\classes
+[INFO] Copying 6 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ tienda-backend ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ tienda-backend ---
+[INFO] skip non existing resourceDirectory C:\Users\leyva\Desktop\Escuela\cuarto semestre\Fund.BD\shopFundDb\backend\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.11.0:testCompile (default-testCompile) @ tienda-backend ---
+[INFO] No sources to compile
+[INFO] 
+[INFO] <<< spring-boot:3.2.5:run (default-cli) < test-compile @ tienda-backend <<<
+[INFO] 
+[INFO] 
+[INFO] --- spring-boot:3.2.5:run (default-cli) @ tienda-backend ---
+[INFO] Attaching agents: []
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v3.2.5)
+
+2026-05-12T22:17:07.486-06:00  INFO 18240 --- [tienda-backend] [  restartedMain] com.tienda.TiendaApplication             : Starting TiendaApplication using Java 21.0.6 with PID 18240 (C:\Users\leyva\Desktop\Escuela\cuarto semestre\Fund.BD\shopFundDb\backend\target\classes started by leyva in C:\Users\leyva\Desktop\Escuela\cuarto semestre\Fund.BD\shopFundDb\backend)
+2026-05-12T22:17:07.490-06:00  INFO 18240 --- [tienda-backend] [  restartedMain] com.tienda.TiendaApplication             : The following 1 profile is active: "dev"
+2026-05-12T22:17:07.609-06:00  INFO 18240 --- [tienda-backend] [  restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-05-12T22:17:07.609-06:00  INFO 18240 --- [tienda-backend] [  restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-05-12T22:17:10.938-06:00  INFO 18240 --- [tienda-backend] [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-05-12T22:17:11.297-06:00  INFO 18240 --- [tienda-backend] [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 337 ms. Found 19 JPA repository interfaces.
+2026-05-12T22:17:13.817-06:00  INFO 18240 --- [tienda-backend] [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2026-05-12T22:17:13.861-06:00  INFO 18240 --- [tienda-backend] [  restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-05-12T22:17:13.864-06:00  INFO 18240 --- [tienda-backend] [  restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.20]
+2026-05-12T22:17:14.046-06:00  INFO 18240 --- [tienda-backend] [  restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-05-12T22:17:14.049-06:00  INFO 18240 --- [tienda-backend] [  restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 6437 ms
+2026-05-12T22:17:14.506-06:00  INFO 18240 --- [tienda-backend] [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-05-12T22:17:15.186-06:00  INFO 18240 --- [tienda-backend] [  restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection conn0: url=jdbc:h2:file:./data/tienda user=SA
+2026-05-12T22:17:15.190-06:00  INFO 18240 --- [tienda-backend] [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-05-12T22:17:15.218-06:00  INFO 18240 --- [tienda-backend] [  restartedMain] o.s.b.a.h2.H2ConsoleAutoConfiguration    : H2 console available at '/h2-console'. Database available at 'jdbc:h2:file:./data/tienda'
+2026-05-12T22:17:15.887-06:00  INFO 18240 --- [tienda-backend] [  restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-05-12T22:17:16.103-06:00  INFO 18240 --- [tienda-backend] [  restartedMain] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.4.4.Final
+2026-05-12T22:17:16.217-06:00  INFO 18240 --- [tienda-backend] [  restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2026-05-12T22:17:16.904-06:00  INFO 18240 --- [tienda-backend] [  restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-05-12T22:17:21.385-06:00  INFO 18240 --- [tienda-backend] [  restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-05-12T22:17:21.791-06:00  INFO 18240 --- [tienda-backend] [  restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-05-12T22:17:23.600-06:00  INFO 18240 --- [tienda-backend] [  restartedMain] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-05-12T22:17:27.423-06:00  WARN 18240 --- [tienda-backend] [  restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-05-12T22:17:29.053-06:00  INFO 18240 --- [tienda-backend] [  restartedMain] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 2 endpoint(s) beneath base path '/actuator'
+2026-05-12T22:17:29.369-06:00  INFO 18240 --- [tienda-backend] [  restartedMain] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@5f750946, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@304de00c, org.springframework.security.web.context.SecurityContextHolderFilter@4e780e7e, org.springframework.security.web.header.HeaderWriterFilter@17b1fe21, org.springframework.web.filter.CorsFilter@3911514d, org.springframework.security.web.authentication.logout.LogoutFilter@6732d1e9, com.tienda.security.JwtAuthFilter@2b91bcd5, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@772ae2b9, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@74ad9d39, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@8da144b, org.springframework.security.web.session.SessionManagementFilter@563da6ab, org.springframework.security.web.access.ExceptionTranslationFilter@e9fb979, org.springframework.security.web.access.intercept.AuthorizationFilter@20631287]

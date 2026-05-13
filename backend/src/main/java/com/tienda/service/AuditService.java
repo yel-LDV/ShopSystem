@@ -19,14 +19,13 @@ public class AuditService {
 
     public void log(String username, String action, String entityType, Long entityId,
                     String oldValue, String newValue) {
-        AuditLog log = AuditLog.builder()
-                .username(username)
-                .action(action)
-                .entityType(entityType)
-                .entityId(entityId)
-                .oldValue(oldValue)
-                .newValue(newValue)
-                .build();
+        AuditLog log = new AuditLog();
+        log.setUsername(username);
+        log.setAction(action);
+        log.setEntityType(entityType);
+        log.setEntityId(entityId);
+        log.setOldValue(oldValue);
+        log.setNewValue(newValue);
         auditLogRepository.save(log);
     }
 
@@ -39,6 +38,6 @@ public class AuditService {
     }
 
     public java.util.List<AuditLog> getLogsBetween(LocalDateTime start, LocalDateTime end) {
-        return auditLogRepository.findByTimestampBetween(start, end);
+        return auditLogRepository.findByCreatedAtBetween(start, end);
     }
 }

@@ -1,6 +1,8 @@
 package com.tienda.service;
 
+import com.tienda.dto.BatchDto;
 import com.tienda.dto.BatchRequest;
+import com.tienda.dto.BatchResponse;
 import com.tienda.dto.ProductDto;
 import com.tienda.entity.*;
 import com.tienda.repository.*;
@@ -93,9 +95,32 @@ public class ProductService {
 
         product = productRepository.save(product);
 
+        if (dto.getBatches() != null && !dto.getBatches().isEmpty()) {
+            for (BatchDto batchDto : dto.getBatches()) {
+                createBatchForProduct(product, batchDto);
+            }
+        }
+
         safeAudit(supplier.getEmail(), "PRODUCT_CREATED", "PRODUCT", product.getId(), null, dto.getName());
 
         return product;
+    }
+
+    private void createBatchForProduct(SupplierProduct product, BatchDto dto) {
+        LocalDate expirationDate = LocalDate.of(
+                dto.getExpirationYear(),
+                dto.getExpirationMonth(),
+                dto.getExpirationDay()
+        );
+
+        Batch batch = Batch.builder()
+                .quantity(dto.getQuantity())
+                .expirationDate(expirationDate)
+                .purchasePrice(dto.getPurchasePrice() != null ? dto.getPurchasePrice() : product.getBasePrice())
+                .supplierProduct(product)
+                .build();
+
+        batchRepository.save(batch);
     }
 
     @Transactional
@@ -117,8 +142,8 @@ public class ProductService {
 
         if (dto.getName() != null) product.setName(dto.getName());
         if (dto.getBasePrice() != null) product.setBasePrice(dto.getBasePrice());
-        if (dto.getMinStock() > 0) product.setMinStock(dto.getMinStock());
-        if (dto.getMaxStock() > 0) product.setMaxStock(dto.getMaxStock());
+        if (dto.getMinStock() >= 0) product.setMinStock(dto.getMinStock());
+        if (dto.getMaxStock() >= 0) product.setMaxStock(dto.getMaxStock());
 
         product = productRepository.save(product);
 
@@ -156,6 +181,20 @@ public class ProductService {
         return batchRepository.findAvailableBatchesByProductId(productId).stream()
                 .mapToInt(b -> b.getQuantity() - b.getReservedQuantity())
                 .sum();
+    }
+
+    public List<BatchResponse> getAvailableBatchesForProduct(Long productId) {
+        return batchRepository.findAvailableBatchesByProductId(productId).stream()
+                .map(b -> BatchResponse.builder()
+                        .id(b.getId())
+                        .quantity(b.getQuantity())
+                        .availableQuantity(b.getQuantity() - b.getReservedQuantity())
+                        .expirationDate(b.getExpirationDate())
+                        .purchasePrice(b.getPurchasePrice())
+                        .createdAt(b.getCreatedAt())
+                        .productId(productId)
+                        .build())
+                .collect(Collectors.toList());
     }
 
     @Transactional

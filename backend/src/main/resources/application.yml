@@ -5,6 +5,9 @@ spring:
   application:
     name: tienda-backend
 
+  profiles:
+    active: dev
+
   # H2 es la base autoritativa siempre activa
   datasource:
     url: jdbc:h2:file:./data/tienda;MODE=MySQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE

@@ -66,11 +66,15 @@ public class EmailService {
 
     @Scheduled(fixedRate = 300000)
     public void retryFailedEmails() {
-        List<EmailQueue> failed = emailQueueRepository
-                .findByStatusAndRetryCountLessThan(EmailQueue.EmailStatus.FAILED, 3);
+        try {
+            List<EmailQueue> pending = emailQueueRepository
+                    .findByStatusAndRetryCountLessThan(EmailQueue.EmailStatus.PENDING, 3);
 
-        for (EmailQueue queue : failed) {
-            sendQueuedEmail(queue);
+            for (EmailQueue queue : pending) {
+                sendQueuedEmail(queue);
+            }
+        } catch (Exception e) {
+            log.error("Error en reintento de emails: {}", e.getMessage());
         }
     }
 }
