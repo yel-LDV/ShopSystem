@@ -94,6 +94,7 @@ export interface Order {
   itemCount: number
   total: number
   items?: OrderItem[]
+  ticketId?: number | null
 }
 
 export interface Ticket {

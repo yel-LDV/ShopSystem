@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface TicketRepository extends JpaRepository<Ticket, Long> {
 
@@ -19,4 +20,6 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
     List<Ticket> findByStatusAndVotingEndDateBefore(Ticket.TicketStatus status, LocalDateTime dateTime);
 
     List<Ticket> findAllByOrderByCreatedAtDesc();
+
+    Optional<Ticket> findByOrderId(Long orderId);
 }

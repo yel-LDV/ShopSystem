@@ -97,10 +97,7 @@ export default function OrderList() {
                     </>
                   )}
                   {order.status === 'DISPUTED' && (
-                    <Button size="sm" variant="secondary" onClick={() => {
-                      // Find ticket for this order
-                      navigate(`/ticket/0`) // Simplified - would look up actual ticket ID
-                    }}>
+                    <Button size="sm" variant="secondary" onClick={() => navigate(`/ticket/${order.ticketId || '0'}`)}>
                       Ver ticket
                     </Button>
                   )}

@@ -98,7 +98,7 @@ export default function SupplierOrders() {
                     </>
                   )}
                   {order.status === 'DISPUTED' && (
-                    <Link to={`/ticket/0`}>
+                    <Link to={`/ticket/${order.ticketId || '0'}`}>
                       <Button size="sm" variant="secondary">Ver ticket</Button>
                     </Link>
                   )}

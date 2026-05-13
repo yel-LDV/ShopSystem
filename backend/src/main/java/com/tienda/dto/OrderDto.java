@@ -24,4 +24,5 @@ public class OrderDto {
     private String rejectionReason;
     private int itemCount;
     private BigDecimal total;
+    private Long ticketId;
 }

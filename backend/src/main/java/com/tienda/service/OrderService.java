@@ -26,6 +26,7 @@ public class OrderService {
     private final SupplierRepository supplierRepository;
     private final SupplierProductRepository productRepository;
     private final BatchRepository batchRepository;
+    private final TicketRepository ticketRepository;
     private final InventoryService inventoryService;
     private final NotificationService notificationService;
     private final AuditService auditService;
@@ -36,6 +37,7 @@ public class OrderService {
                         SupplierRepository supplierRepository,
                         SupplierProductRepository productRepository,
                         BatchRepository batchRepository,
+                        TicketRepository ticketRepository,
                         InventoryService inventoryService,
                         NotificationService notificationService,
                         AuditService auditService) {
@@ -45,6 +47,7 @@ public class OrderService {
         this.supplierRepository = supplierRepository;
         this.productRepository = productRepository;
         this.batchRepository = batchRepository;
+        this.ticketRepository = ticketRepository;
         this.inventoryService = inventoryService;
         this.notificationService = notificationService;
         this.auditService = auditService;
@@ -227,6 +230,10 @@ public class OrderService {
     }
 
     private OrderDto toDto(Order order) {
+        Long ticketId = ticketRepository.findByOrderId(order.getId())
+                .map(Ticket::getId)
+                .orElse(null);
+
         return OrderDto.builder()
                 .id(order.getId())
                 .storeName(order.getStoreOwner().getStoreName())
@@ -241,6 +248,7 @@ public class OrderService {
                 .total(order.getItems().stream()
                         .map(i -> i.getUnitPrice().multiply(BigDecimal.valueOf(i.getQuantity())))
                         .reduce(BigDecimal.ZERO, BigDecimal::add))
+                .ticketId(ticketId)
                 .build();
     }
 

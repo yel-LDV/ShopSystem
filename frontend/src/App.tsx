@@ -15,9 +15,11 @@ const InventoryList = lazy(() => import('./pages/store/InventoryList'))
 const NewOrder = lazy(() => import('./pages/store/NewOrder'))
 const OrderList = lazy(() => import('./pages/store/OrderList'))
 const PosPage = lazy(() => import('./pages/store/PosPage'))
+const StoreTicketsPage = lazy(() => import('./pages/store/StoreTicketsPage'))
 const SupplierDashboard = lazy(() => import('./pages/supplier/SupplierDashboard'))
 const ProductList = lazy(() => import('./pages/supplier/ProductList'))
 const SupplierOrders = lazy(() => import('./pages/supplier/SupplierOrders'))
+const SupplierTicketsPage = lazy(() => import('./pages/supplier/SupplierTicketsPage'))
 const TicketChatPage = lazy(() => import('./pages/TicketChatPage'))
 
 function Loading() {
@@ -57,10 +59,12 @@ export default function App() {
       <Route path="/store/new-order" element={<ProtectedRoute><NewOrder /></ProtectedRoute>} />
       <Route path="/store/orders" element={<ProtectedRoute><OrderList /></ProtectedRoute>} />
       <Route path="/store/pos" element={<ProtectedRoute><PosPage /></ProtectedRoute>} />
+      <Route path="/store/tickets" element={<ProtectedRoute><StoreTicketsPage /></ProtectedRoute>} />
 
       <Route path="/supplier" element={<ProtectedRoute><SupplierDashboard /></ProtectedRoute>} />
       <Route path="/supplier/products" element={<ProtectedRoute><ProductList /></ProtectedRoute>} />
       <Route path="/supplier/orders" element={<ProtectedRoute><SupplierOrders /></ProtectedRoute>} />
+      <Route path="/supplier/tickets" element={<ProtectedRoute><SupplierTicketsPage /></ProtectedRoute>} />
 
       <Route path="/ticket/:id" element={<ProtectedRoute><TicketChatPage /></ProtectedRoute>} />
 

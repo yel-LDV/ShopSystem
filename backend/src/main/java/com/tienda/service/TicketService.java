@@ -270,18 +270,6 @@ public class TicketService {
 
         if (accept) {
             ticket.setNegotiationStatus(Ticket.NegotiationStatus.ACCEPTED);
-
-            BigDecimal originalPrice = ticket.getOrder().getItems().stream()
-                    .map(i -> i.getUnitPrice().multiply(BigDecimal.valueOf(i.getQuantity())))
-                    .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-            if (originalPrice.compareTo(BigDecimal.ZERO) > 0) {
-                BigDecimal diff = originalPrice.subtract(ticket.getProposedPrice());
-                int discountPct = diff.divide(originalPrice, 2, RoundingMode.HALF_UP)
-                        .multiply(BigDecimal.valueOf(100)).intValue();
-                ticket.setDiscountPercentage(Math.max(0, discountPct));
-            }
-
             ticket.setFinalResolution(Ticket.ResolutionType.ACCEPT);
             ticket.setStatus(Ticket.TicketStatus.RESOLVED);
             applyResolutionOnOrder(ticket, Ticket.ResolutionType.ACCEPT);
@@ -369,6 +357,8 @@ public class TicketService {
 
             case ACCEPT:
             case DISCOUNT:
+                applyNegotiatedPriceIfPresent(ticket, order);
+
                 for (OrderItem item : order.getItems()) {
                     inventoryService.deductFromBatches(item.getSupplierProduct().getId(), item.getQuantity());
                     inventoryService.addOrUpdateInventory(
@@ -382,6 +372,35 @@ public class TicketService {
         }
 
         orderRepository.save(order);
+    }
+
+    private void applyNegotiatedPriceIfPresent(Ticket ticket, Order order) {
+        BigDecimal proposedPrice = ticket.getProposedPrice();
+        if (proposedPrice == null || proposedPrice.compareTo(BigDecimal.ZERO) <= 0) {
+            return;
+        }
+
+        BigDecimal originalTotal = order.getItems().stream()
+                .map(i -> i.getUnitPrice().multiply(BigDecimal.valueOf(i.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        if (originalTotal.compareTo(BigDecimal.ZERO) <= 0) {
+            return;
+        }
+
+        for (OrderItem item : order.getItems()) {
+            BigDecimal proportion = item.getUnitPrice()
+                    .multiply(BigDecimal.valueOf(item.getQuantity()))
+                    .divide(originalTotal, 6, RoundingMode.HALF_UP);
+            BigDecimal newUnitPrice = proposedPrice.multiply(proportion)
+                    .divide(BigDecimal.valueOf(item.getQuantity()), 2, RoundingMode.HALF_UP);
+            item.setUnitPrice(newUnitPrice);
+        }
+
+        BigDecimal diff = originalTotal.subtract(proposedPrice);
+        int discountPct = diff.divide(originalTotal, 2, RoundingMode.HALF_UP)
+                .multiply(BigDecimal.valueOf(100)).intValue();
+        ticket.setDiscountPercentage(Math.max(0, discountPct));
     }
 
     private void notifyParties(Ticket ticket, String message) {
