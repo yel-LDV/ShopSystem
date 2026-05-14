@@ -3,19 +3,24 @@ package com.tienda.config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.*;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Order(Ordered.LOWEST_PRECEDENCE)
@@ -48,6 +53,7 @@ public class MariaDbSyncService implements ApplicationRunner {
     private final DataSource h2DataSource;
 
     @Autowired(required = false)
+    @Qualifier("mariaDbDataSource")
     private DataSource mariaDbDataSource;
 
     public MariaDbSyncService(DataSource h2DataSource) {
@@ -70,70 +76,106 @@ public class MariaDbSyncService implements ApplicationRunner {
     }
 
     private void syncH2ToMariaDb() throws Exception {
-        JdbcTemplate h2 = new JdbcTemplate(h2DataSource);
-        JdbcTemplate maria = new JdbcTemplate(mariaDbDataSource);
+        try (Connection h2Conn = h2DataSource.getConnection();
+             Connection mariaConn = mariaDbDataSource.getConnection()) {
 
-        executeSchema(maria);
-        copyAllData(h2, maria);
+            h2Conn.setAutoCommit(true);
+            mariaConn.setAutoCommit(true);
+
+            executeSchema(mariaConn);
+            copyAllData(h2Conn, mariaConn);
+        }
     }
 
-    private void executeSchema(JdbcTemplate maria) throws Exception {
+    private void executeSchema(Connection maria) throws Exception {
         log.info("Ejecutando schema DDL en MariaDB...");
 
-        String[] migrations = {"db/migration/V1__initial_schema.sql", "db/migration/V6__rename_tables_spanish.sql"};
-        for (String migrationPath : migrations) {
-            ClassPathResource resource = new ClassPathResource(migrationPath);
-            if (!resource.exists()) {
-                log.debug("Migración no encontrada: {}", migrationPath);
-                continue;
-            }
-            String sql = new String(resource.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
-            String[] statements = sql.split(";");
-            for (String stmt : statements) {
-                String trimmed = stmt.trim();
-                if (trimmed.isEmpty() || trimmed.startsWith("--")) {
+        try (Statement stmt = maria.createStatement()) {
+            stmt.execute("SET FOREIGN_KEY_CHECKS = 0");
+
+            String[] migrations = {"db/migration/V1__initial_schema.sql", "db/migration/V6__rename_tables_spanish.sql"};
+            for (String migrationPath : migrations) {
+                ClassPathResource resource = new ClassPathResource(migrationPath);
+                if (!resource.exists()) {
+                    log.warn("Migracion no encontrada: {}", migrationPath);
                     continue;
                 }
-                try {
-                    maria.execute(trimmed);
-                } catch (Exception e) {
-                    log.debug("Ignorando error esperado en DDL: {}", e.getMessage());
+                String sql = new String(resource.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+
+                for (String rawStmt : sql.split(";")) {
+                    String cleaned = stripComments(rawStmt);
+                    if (cleaned.isEmpty()) continue;
+                    try {
+                        stmt.execute(cleaned);
+                    } catch (Exception e) {
+                        log.warn("Error ejecutando DDL [{}]: {}",
+                                cleaned.substring(0, Math.min(80, cleaned.length())), e.getMessage());
+                    }
                 }
             }
+
+            stmt.execute("SET FOREIGN_KEY_CHECKS = 1");
         }
+
         log.info("Schema DDL ejecutado en MariaDB.");
     }
 
-    private void copyAllData(JdbcTemplate h2, JdbcTemplate maria) {
+    private String stripComments(String stmt) {
+        StringBuilder sb = new StringBuilder();
+        for (String line : stmt.split("\n")) {
+            String trimmed = line.trim();
+            if (trimmed.isEmpty() || trimmed.startsWith("--")) continue;
+            sb.append(trimmed).append(" ");
+        }
+        return sb.toString().trim();
+    }
+
+    private void copyAllData(Connection h2Conn, Connection mariaConn) throws Exception {
         log.info("Copiando datos de H2 -> MariaDB...");
 
-        try (Connection mariaConn = mariaDbDataSource.getConnection()) {
-            mariaConn.createStatement().execute("SET FOREIGN_KEY_CHECKS = 0");
+        try (Statement stmt = mariaConn.createStatement()) {
+            stmt.execute("SET FOREIGN_KEY_CHECKS = 0");
+        }
 
-            for (String table : TABLE_ORDER) {
-                try {
-                    copyTable(h2, maria, table);
-                } catch (Exception e) {
-                    log.warn("Error copiando tabla '{}': {}", table, e.getMessage());
-                }
+        for (String table : TABLE_ORDER) {
+            try {
+                copyTable(h2Conn, mariaConn, table);
+            } catch (Exception e) {
+                log.warn("Error copiando tabla '{}': {}", table, e.getMessage());
             }
+        }
 
-            mariaConn.createStatement().execute("SET FOREIGN_KEY_CHECKS = 1");
-        } catch (Exception e) {
-            log.error("Error en sync FK: {}", e.getMessage());
+        try (Statement stmt = mariaConn.createStatement()) {
+            stmt.execute("SET FOREIGN_KEY_CHECKS = 1");
         }
 
         log.info("Datos copiados H2 -> MariaDB completado.");
     }
 
-    private void copyTable(JdbcTemplate h2, JdbcTemplate maria, String tableName) {
-        List<Map<String, Object>> rows = h2.queryForList("SELECT * FROM " + tableName);
+    private void copyTable(Connection h2Conn, Connection mariaConn, String tableName) throws Exception {
+        List<Map<String, Object>> rows = new ArrayList<>();
+
+        try (Statement h2Stmt = h2Conn.createStatement();
+             ResultSet rs = h2Stmt.executeQuery("SELECT * FROM " + tableName)) {
+            var meta = rs.getMetaData();
+            int colCount = meta.getColumnCount();
+            while (rs.next()) {
+                Map<String, Object> row = new LinkedHashMap<>();
+                for (int i = 1; i <= colCount; i++) {
+                    row.put(meta.getColumnName(i).toLowerCase(), rs.getObject(i));
+                }
+                rows.add(row);
+            }
+        }
+
         if (rows.isEmpty()) {
             log.debug("  {}: 0 filas", tableName);
             return;
         }
 
-        maria.execute("DELETE FROM " + tableName);
+        try (Statement stmt = mariaConn.createStatement()) {
+            stmt.execute("DELETE FROM " + tableName);
+        }
 
         for (Map<String, Object> row : rows) {
             StringBuilder cols = new StringBuilder();
@@ -150,7 +192,13 @@ public class MariaDbSyncService implements ApplicationRunner {
                 params.add(entry.getValue());
             }
 
-            maria.update("INSERT INTO " + tableName + " (" + cols + ") VALUES (" + vals + ")", params.toArray());
+            try (PreparedStatement ps = mariaConn.prepareStatement(
+                    "INSERT INTO " + tableName + " (" + cols + ") VALUES (" + vals + ")")) {
+                for (int i = 0; i < params.size(); i++) {
+                    ps.setObject(i + 1, params.get(i));
+                }
+                ps.executeUpdate();
+            }
         }
 
         log.info("  {}: {} filas copiadas", tableName, rows.size());

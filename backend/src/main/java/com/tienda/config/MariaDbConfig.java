@@ -30,7 +30,8 @@ public class MariaDbConfig {
     @Conditional(MariaDbAvailableCondition.class)
     public DataSource mariaDbDataSource() {
         String url = "jdbc:mariadb://" + host + ":" + port + "/" + dbName
-                + "?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
+                + "?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC"
+                + "&socketTimeout=60000&connectTimeout=10000&tcpKeepAlive=true";
 
         return DataSourceBuilder.create()
                 .url(url)
