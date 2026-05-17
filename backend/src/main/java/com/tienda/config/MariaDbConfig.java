@@ -3,8 +3,8 @@ package com.tienda.config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 import javax.sql.DataSource;
 
@@ -27,7 +27,7 @@ public class MariaDbConfig {
     private String password;
 
     @Bean
-    @Conditional(MariaDbAvailableCondition.class)
+    @Primary
     public DataSource mariaDbDataSource() {
         String url = "jdbc:mariadb://" + host + ":" + port + "/" + dbName
                 + "?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC"

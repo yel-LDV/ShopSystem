@@ -1,13 +1,5 @@
 spring:
-  h2:
-    console:
-      enabled: true
-
   jpa:
     show-sql: false
     hibernate:
       ddl-auto: create
-
-  mail:
-    username: dev
-    password: dev

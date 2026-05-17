@@ -8,17 +8,12 @@ spring:
   profiles:
     active: dev
 
-  # H2 es la base autoritativa siempre activa
+  # MariaDB es la base PRIMARIA
   datasource:
-    url: jdbc:h2:file:./data/tienda;MODE=MySQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-    username: sa
+    url: jdbc:mariadb://localhost:3307/market?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&socketTimeout=60000&connectTimeout=10000&tcpKeepAlive=true
+    username: root
     password:
-    driver-class-name: org.h2.Driver
-
-  h2:
-    console:
-      enabled: false
-      path: /h2-console
+    driver-class-name: org.mariadb.jdbc.Driver
 
   jpa:
     hibernate:

@@ -1,0 +1,98 @@
+﻿[INFO] Scanning for projects...
+[INFO] 
+[INFO] ---------------------< com.tienda:tienda-backend >----------------------
+[INFO] Building tienda-backend 1.0.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] >>> spring-boot:3.2.5:run (default-cli) > test-compile @ tienda-backend >>>
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ tienda-backend ---
+[INFO] Copying 4 resources from src\main\resources to target\classes
+[INFO] Copying 6 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ tienda-backend ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ tienda-backend ---
+[INFO] skip non existing resourceDirectory C:\Users\leyva\Desktop\Escuela\cuarto semestre\Fund.BD\shopFundDb\backend\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.11.0:testCompile (default-testCompile) @ tienda-backend ---
+[INFO] No sources to compile
+[INFO] 
+[INFO] <<< spring-boot:3.2.5:run (default-cli) < test-compile @ tienda-backend <<<
+[INFO] 
+[INFO] 
+[INFO] --- spring-boot:3.2.5:run (default-cli) @ tienda-backend ---
+[INFO] Attaching agents: []
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v3.2.5)
+
+2026-05-14T14:21:35.953-06:00  INFO 17836 --- [tienda-backend] [  restartedMain] com.tienda.TiendaApplication             : Starting TiendaApplication using Java 21.0.6 with PID 17836 (C:\Users\leyva\Desktop\Escuela\cuarto semestre\Fund.BD\shopFundDb\backend\target\classes started by leyva in C:\Users\leyva\Desktop\Escuela\cuarto semestre\Fund.BD\shopFundDb\backend)
+2026-05-14T14:21:35.957-06:00  INFO 17836 --- [tienda-backend] [  restartedMain] com.tienda.TiendaApplication             : The following 1 profile is active: "dev"
+2026-05-14T14:21:35.998-06:00  INFO 17836 --- [tienda-backend] [  restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-05-14T14:21:35.998-06:00  INFO 17836 --- [tienda-backend] [  restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-05-14T14:21:36.795-06:00  INFO 17836 --- [tienda-backend] [  restartedMain] c.t.config.MariaDbAvailableCondition     : MariaDB detectada en localhost:3307 ÔÇö se sincronizara desde H2 (autoritativo)
+2026-05-14T14:21:37.111-06:00  INFO 17836 --- [tienda-backend] [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-05-14T14:21:37.210-06:00  INFO 17836 --- [tienda-backend] [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 90 ms. Found 19 JPA repository interfaces.
+2026-05-14T14:21:37.993-06:00  INFO 17836 --- [tienda-backend] [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2026-05-14T14:21:38.008-06:00  INFO 17836 --- [tienda-backend] [  restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-05-14T14:21:38.008-06:00  INFO 17836 --- [tienda-backend] [  restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.20]
+2026-05-14T14:21:38.050-06:00  INFO 17836 --- [tienda-backend] [  restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-05-14T14:21:38.050-06:00  INFO 17836 --- [tienda-backend] [  restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2052 ms
+2026-05-14T14:21:38.159-06:00  INFO 17836 --- [tienda-backend] [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-05-14T14:21:38.398-06:00  INFO 17836 --- [tienda-backend] [  restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection conn0: url=jdbc:h2:file:./data/tienda user=SA
+2026-05-14T14:21:38.398-06:00  INFO 17836 --- [tienda-backend] [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-05-14T14:21:38.405-06:00  INFO 17836 --- [tienda-backend] [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Starting...
+2026-05-14T14:21:38.414-06:00  INFO 17836 --- [tienda-backend] [  restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-2 - Added connection org.mariadb.jdbc.Connection@5e9ecbf2
+2026-05-14T14:21:38.414-06:00  INFO 17836 --- [tienda-backend] [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Start completed.
+2026-05-14T14:21:38.421-06:00  INFO 17836 --- [tienda-backend] [  restartedMain] o.s.b.a.h2.H2ConsoleAutoConfiguration    : H2 console available at '/h2-console'. Databases available at 'jdbc:h2:file:./data/tienda', 'jdbc:mariadb://localhost:3307/market?user=root&serverTimezone=UTC&useSSL=false&createDatabaseIfNotExist=true&connectTimeout=10000&socketTimeout=60000&allowPublicKeyRetrieval=true'
+2026-05-14T14:21:38.601-06:00  INFO 17836 --- [tienda-backend] [  restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-05-14T14:21:38.650-06:00  INFO 17836 --- [tienda-backend] [  restartedMain] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.4.4.Final
+2026-05-14T14:21:38.686-06:00  INFO 17836 --- [tienda-backend] [  restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2026-05-14T14:21:38.879-06:00  INFO 17836 --- [tienda-backend] [  restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-05-14T14:21:40.130-06:00  INFO 17836 --- [tienda-backend] [  restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-05-14T14:21:40.221-06:00  INFO 17836 --- [tienda-backend] [  restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-05-14T14:21:40.714-06:00  INFO 17836 --- [tienda-backend] [  restartedMain] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-05-14T14:21:41.978-06:00  WARN 17836 --- [tienda-backend] [  restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-05-14T14:21:42.419-06:00  INFO 17836 --- [tienda-backend] [  restartedMain] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 2 endpoint(s) beneath base path '/actuator'
+2026-05-14T14:21:42.510-06:00  INFO 17836 --- [tienda-backend] [  restartedMain] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@be011fe, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@1d5db04, org.springframework.security.web.context.SecurityContextHolderFilter@46bd16c, org.springframework.security.web.header.HeaderWriterFilter@6ec7a7bd, org.springframework.web.filter.CorsFilter@6c32c242, org.springframework.security.web.authentication.logout.LogoutFilter@530c0d6b, com.tienda.security.JwtAuthFilter@30ff5c7c, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@4ab2ff2b, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@9b59078, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@4108c341, org.springframework.security.web.session.SessionManagementFilter@5749bbd9, org.springframework.security.web.access.ExceptionTranslationFilter@40ee3451, org.springframework.security.web.access.intercept.AuthorizationFilter@47234a2b]
+2026-05-14T14:21:43.001-06:00  INFO 17836 --- [tienda-backend] [  restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2026-05-14T14:21:43.071-06:00  INFO 17836 --- [tienda-backend] [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path ''
+2026-05-14T14:21:43.071-06:00  INFO 17836 --- [tienda-backend] [  restartedMain] o.s.m.s.b.SimpleBrokerMessageHandler     : Starting...
+2026-05-14T14:21:43.077-06:00  INFO 17836 --- [tienda-backend] [  restartedMain] o.s.m.s.b.SimpleBrokerMessageHandler     : BrokerAvailabilityEvent[available=true, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@584fb629]]
+2026-05-14T14:21:43.077-06:00  INFO 17836 --- [tienda-backend] [  restartedMain] o.s.m.s.b.SimpleBrokerMessageHandler     : Started.
+2026-05-14T14:21:43.091-06:00  INFO 17836 --- [tienda-backend] [  restartedMain] com.tienda.TiendaApplication             : Started TiendaApplication in 7.494 seconds (process running for 7.886)
+2026-05-14T14:21:43.174-06:00  INFO 17836 --- [tienda-backend] [  restartedMain] com.tienda.config.DataInitializer        : >>> DataInitializer iniciando...
+2026-05-14T14:21:43.174-06:00  INFO 17836 --- [tienda-backend] [  restartedMain] com.tienda.config.DataInitializer        : Poblando datos iniciales...
+2026-05-14T14:21:43.338-06:00  INFO 17836 --- [tienda-backend] [  restartedMain] com.tienda.config.DataInitializer        :   Admin creado.
+2026-05-14T14:21:43.344-06:00  INFO 17836 --- [tienda-backend] [  restartedMain] com.tienda.config.DataInitializer        :   Tienda creada.
+2026-05-14T14:21:43.348-06:00  INFO 17836 --- [tienda-backend] [  restartedMain] com.tienda.config.DataInitializer        :   Proveedor creado.
+2026-05-14T14:21:43.352-06:00  INFO 17836 --- [tienda-backend] [  restartedMain] com.tienda.config.DataInitializer        :   Unidades de medida creadas.
+2026-05-14T14:21:43.360-06:00  INFO 17836 --- [tienda-backend] [  restartedMain] com.tienda.config.DataInitializer        :   Productos creados.
+2026-05-14T14:21:43.367-06:00  INFO 17836 --- [tienda-backend] [  restartedMain] com.tienda.config.DataInitializer        :   Lotes creados.
+2026-05-14T14:21:43.375-06:00  INFO 17836 --- [tienda-backend] [  restartedMain] com.tienda.config.DataInitializer        :   Inventario creado.
+2026-05-14T14:21:43.375-06:00  INFO 17836 --- [tienda-backend] [  restartedMain] com.tienda.config.DataInitializer        : Datos iniciales poblados (con posibles omisiones por errores).
+2026-05-14T14:21:43.375-06:00  INFO 17836 --- [tienda-backend] [  restartedMain] com.tienda.config.MariaDbSyncService     : Ejecutando schema DDL en MariaDB...
+2026-05-14T14:21:54.874-06:00  INFO 17836 --- [tienda-backend] [  restartedMain] com.tienda.config.MariaDbSyncService     : Schema DDL ejecutado en MariaDB.
+2026-05-14T14:21:54.874-06:00  INFO 17836 --- [tienda-backend] [  restartedMain] com.tienda.config.MariaDbSyncService     : Copiando datos de H2 -> MariaDB...
+2026-05-14T14:21:54.905-06:00  INFO 17836 --- [tienda-backend] [  restartedMain] com.tienda.config.MariaDbSyncService     :   usuario: 3 filas copiadas
+2026-05-14T14:21:54.913-06:00  INFO 17836 --- [tienda-backend] [  restartedMain] com.tienda.config.MariaDbSyncService     :   admin_usuario: 1 filas copiadas
+2026-05-14T14:21:54.922-06:00  INFO 17836 --- [tienda-backend] [  restartedMain] com.tienda.config.MariaDbSyncService     :   dueno_tienda: 1 filas copiadas
+2026-05-14T14:21:54.929-06:00  INFO 17836 --- [tienda-backend] [  restartedMain] com.tienda.config.MariaDbSyncService     :   proveedor: 1 filas copiadas
+2026-05-14T14:21:54.946-06:00  INFO 17836 --- [tienda-backend] [  restartedMain] com.tienda.config.MariaDbSyncService     :   unidad_medida: 4 filas copiadas
+2026-05-14T14:21:54.968-06:00  INFO 17836 --- [tienda-backend] [  restartedMain] com.tienda.config.MariaDbSyncService     :   producto: 4 filas copiadas
+2026-05-14T14:21:54.989-06:00  INFO 17836 --- [tienda-backend] [  restartedMain] com.tienda.config.MariaDbSyncService     :   lote: 4 filas copiadas
+2026-05-14T14:21:55.009-06:00  INFO 17836 --- [tienda-backend] [  restartedMain] com.tienda.config.MariaDbSyncService     :   inventario: 4 filas copiadas
+2026-05-14T14:21:55.011-06:00  INFO 17836 --- [tienda-backend] [  restartedMain] com.tienda.config.MariaDbSyncService     : Datos copiados H2 -> MariaDB completado.
+2026-05-14T14:21:55.011-06:00  INFO 17836 --- [tienda-backend] [  restartedMain] com.tienda.config.MariaDbSyncService     : MariaDB sincronizada exitosamente desde H2 (autoritativo).
+2026-05-14T14:21:55.013-06:00  INFO 17836 --- [tienda-backend] [ console-runner] com.tienda.console.ConsoleRunner         : Consola de comandos iniciada. Comandos: stop, restore <archivo.enc>
+2026-05-14T14:22:05.129-06:00  INFO 17836 --- [tienda-backend] [nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-05-14T14:22:05.129-06:00  INFO 17836 --- [tienda-backend] [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-05-14T14:22:05.137-06:00  INFO 17836 --- [tienda-backend] [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 8 ms

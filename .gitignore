@@ -19,7 +19,7 @@ backend/*.war
 .classpath
 *.swp
 *.swo
-
+/V1.0.0
 # OS
 .DS_Store
 Thumbs.db
